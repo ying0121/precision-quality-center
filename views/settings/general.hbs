@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-md-12 bg-primary p-2 mb-2 text-white">
+        <div class="d-flex justify-content-around">
+            <div class="d-flex align-items-center" style="font-size:20px; font-weight:bold;">General Settings</div>
+            <ul class="nav nav-tabs nav-pills" data-tabs="tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#expired" data-toggle="tab">
+                        Expired Range
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="tab-content">
+            <div class="tab-pane active" id="expired">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-md-6 mt-10">
+                        <div class="d-flex form-group">
+                            <label for="expired_survey" class="form-control">Expired Day for Survey (days)</label>
+                            <input type="number" class="form-control" id="expired_survey" style="max-width: 100px;"
+                                value="{{{expired_survey}}}">
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                    <div class="col-md-12 d-flex justify-content-start">
+                        <button type="button" class="btn btn-light-primary" id="expired_save">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(async function () {
+        $("#expired_save").click(function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/general/updateExpiredSurvey`,
+                method: "POST",
+                data: {
+                    value: $("#expired_survey").val()
+                },
+                dataType: "text",
+                success: async function (data) {
+                    toastr.success("Saved Successfully!");
+                },
+                error: function (error) {
+                    toastr.error("Failed in save")
+                }
+            });
+        })
+    })
+</script>

@@ -1,0 +1,376 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div class="d-flex justify-content-start align-items-center w-100">
+            <h3 class="m-0 mr-15">Agreements</h3>
+            <div class="form-group d-flex justify-content-start align-items-center m-0">
+                <select class="form-control" id="agreement_clinic_search"></select>
+            </div>
+        </div>
+        <div style="padding:10px 20px 10px 20px;" class="agreement_add_btn btn btn-light-primary btn-icon"><i
+                class='fa fa-plus'></i></div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="agreement_tb">
+                <thead>
+                    <th>Clinic Name</th>
+                    <th>Name</th>
+                    <th>Language</th>
+                    <th>Type</th>
+                    <th>Completed</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="agreement_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="agreement_modal_type" />
+            <input type="hidden" id="agreement_chosen_id" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Agreements</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Name</h6>
+                            <input id="agreement_name" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Language</h6>
+                            <select class="form-control" id="agreement_language"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Type</h6>
+                            <select class="form-control" id="agreement_type">
+                                <option value="web">Web</option>
+                                <option value="print">Print</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Description</h6>
+                            <div class="summernote" id="agreement_desc"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="agreement_status" class="form-control">
+                                <option value="0">Inactive</option>
+                                <option value="1">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-start align-items-center mx-1">
+                        <input type="checkbox" style="width: 21px; height: 21px;" id="agreement_completed" class="mx-1"
+                            value="1" name="agreement_completed" />
+                        <label for="agreement_completed" class="align-items-center m-0">
+                            <h6 class="m-0">&nbsp;Completed</h6>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary agreement_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="agreement_clinic_modal">
+    <div class="modal-dialog modal-md modal-dialog-scrollable">
+        <input type="hidden" id="modal_agreement_id" />
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Clinics</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row mx-1" id="agreement_clinic_list"></div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary agreement_clinic_modal_confirm"
+                    data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var __item_count = 0
+
+    $(document).ready(function () {
+        $('#agreement_desc').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        // language
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/language/read',
+            method: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (res) {
+                const data = res.data
+                let html = ""
+                data.forEach(lang => {
+                    if (lang.code == "en") {
+                        html += `<option value="${lang.id}" selected>${lang.english}</option>`
+                    } else {
+                        html += `<option value="${lang.id}">${lang.english}</option>`
+                    }
+                })
+                $("#agreement_language").html(html);
+            }
+        })
+
+        // clinics
+        $.ajax({
+            url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/clinic/readOnlyNames",
+            method: "POST",
+            data: {},
+            dataType: 'json',
+            success: function (res) {
+                let html = ""
+                __item_count = res.data.length
+
+                // clinic modal
+                res.data.forEach(item => {
+                    html += `<div class="col-md-12 d-flex justify-content-start align-items-center mx-5 mb-5">
+                            <input class="agreement_clinic_items" type="checkbox" style="width: 24px; height: 24px;" id="agreement_clinic_item_${item.id}" class="mx-1"
+                                value="${item.id}" />
+                            <label for="agreement_clinic_item_${item.id}" class="align-items-center m-0">
+                                <h6 class="m-0">&nbsp;${item.name}</h6>
+                            </label>
+                        </div>`
+                })
+                $("#agreement_clinic_list").html(html)
+
+                // search by clinic
+                html = ""
+                res.data.forEach(clinic => {
+                    html += `<option value="${clinic.id}">${clinic.name}</option>`
+                })
+                $("#agreement_clinic_search").html('<option value="0">All Clinics</option>' + html);
+            }
+        })
+
+        let agreement_tb = $('#agreement_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/agreement/read",
+                "type": "POST",
+                "data": function (d) {
+                    d.clinic_id = $("#agreement_clinic_search").val()
+                }
+            },
+            "columns": [
+                {
+                    data: 'clinic_id',
+                    render: function (data, type, row) {
+                        if (data == '' || data == null) {
+                            return 'All Clinics'
+                        } else {
+                            return `${data.split(',').length} Clinic(s)`
+                        }
+                    }
+                },
+                { data: 'name' },
+                { data: 'language.lang' },
+                { data: 'type' },
+                {
+                    data: 'completed',
+                    render: function (data, type, row) {
+                        return row.completed == 1 ? `<i class="fa fa-check text-success fs-x-large"></i></span>` : ``
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? `<span class="bg-light-primary text-primary rounded p-3">Active</span>` : `<span class="bg-light-danger text-danger rounded p-3">Inactive</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-info agreement_clinic_btn"><i class="fa fa-hospital"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-warning agreement_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  agreement_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".agreement_add_btn").click(function () {
+            $("#agreement_modal_type").val("0")
+            $("#agreement_chosen_id").val($(this).parent().attr("idkey"))
+            $("#agreement_modal").modal("show")
+        })
+
+        $(document).on("click", ".agreement_edit_btn", function () {
+            $("#agreement_modal_type").val("1")
+            $("#agreement_chosen_id").val($(this).parent().attr("idkey"))
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/agreement/readOne',
+                method: 'POST',
+                data: { id: $("#agreement_chosen_id").val() },
+                dataType: 'json',
+                success: function (res) {
+                    $("#agreement_clinic").val(res.clinic_id)
+                    $("#agreement_name").val(res.name)
+                    $("#agreement_language").val(res.lang_id)
+                    $("#agreement_type").val(res.type)
+                    $("#agreement_desc").summernote("code", res.desc)
+                    $("#agreement_status").val(res.status)
+                    if (res.completed == 1) {
+                        $("#agreement_completed").prop("checked", true)
+                    } else {
+                        $("#agreement_completed").prop("checked", false)
+                    }
+                    $("#agreement_modal").modal("show")
+                }
+            })
+        })
+
+        $(".agreement_modal_confirm").click(function () {
+            const type = $("#agreement_modal_type").val()
+            const entry = {
+                id: $("#agreement_chosen_id").val(),
+                name: $("#agreement_name").val(),
+                lang_id: $("#agreement_language").val(),
+                type: $("#agreement_type").val(),
+                desc: $("#agreement_desc").summernote("code"),
+                completed: $("#agreement_completed").prop("checked") == true ? 1 : 0,
+                status: $("#agreement_status").val()
+            }
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/agreement/${type == 0 ? 'create' : 'update'}`,
+                method: 'POST',
+                data: entry,
+                dataType: 'text',
+                success: function (res) {
+                    if (res == 'ok') {
+                        toastr.success("Saved Successfully!")
+                        agreement_tb.ajax.reload()
+                    }
+                }
+            })
+        })
+
+        $(document).on("click", ".agreement_delete_btn", function () {
+            const id = $(this).parent().attr('idkey');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/agreement/delete',
+                        method: "POST",
+                        data: { id: id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data = "ok") {
+                                toastr.success("Deleted Successfully!")
+                                agreement_tb.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on("click", ".agreement_clinic_btn", function () {
+            $("#agreement_chosen_id").val($(this).parent().attr("idkey"))
+            $.ajax({
+                url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/agreement/readOne",
+                method: "POST",
+                data: { id: $(this).parent().attr("idkey") },
+                dataType: 'json',
+                success: function (res) {
+                    const clinics = res.clinic_id.split(",")
+
+                    if (clinics.length == 0 || res.clinic_id == '') {
+                        $(".agreement_clinic_items").prop("checked", true)
+                    } else {
+                        $(".agreement_clinic_items").prop("checked", false)
+
+                        clinics.forEach(item => {
+                            $(`#agreement_clinic_item_${item}`).prop('checked', true)
+                        })
+                    }
+
+                    $("#agreement_clinic_modal").modal("show")
+                }
+            })
+        })
+
+        $(".agreement_clinic_modal_confirm").click(function () {
+            let clinics = []
+            const items = $(".agreement_clinic_items")
+            for (var i = 0; i < items.length; i++) {
+                if ($(items[i]).prop("checked") == true) {
+                    clinics.push($(items[i]).val())
+                }
+            }
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/agreement/updateClinics`,
+                method: 'POST',
+                data: {
+                    id: $("#agreement_chosen_id").val(),
+                    clinic_id: clinics.join(",")
+                },
+                dataType: 'text',
+                success: function (res) {
+                    if (res == 'ok') {
+                        toastr.success("Saved Successfully!")
+                        agreement_tb.ajax.reload()
+                    }
+                }
+            })
+        })
+
+        $("#agreement_clinic_search").change(function () {
+            agreement_tb.ajax.reload()
+        })
+    })
+</script>

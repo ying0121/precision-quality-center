@@ -1,0 +1,228 @@
+<style>
+    .fs-2 {
+        font-size: 3rem;
+    }
+
+    .fs-3 {
+        font-size: 2.5rem;
+    }
+
+    .fs-4 {
+        font-size: 2rem;
+    }
+
+    .fs-5 {
+        font-size: 1.75rem;
+    }
+
+    .fs-6 {
+        font-size: 1.5rem;
+    }
+
+    .fs-7 {
+        font-size: 1.25rem;
+    }
+
+    .fw-wrap {
+        flex-wrap: wrap;
+    }
+</style>
+<div class="row" id="feedback-container">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 bg-white border rounded-xl p-15">
+        <div class="mb-5">
+            <div class="d-flex justify-content-between align-items-center survey-title">
+                <h3 class="fs-3 mb-5 px-5"><span class="text-primary">PATIENT</span> Feedback Survey</h3>
+            </div>
+            <p class="fs-6 mb-1">Hello,</p>
+            <p class="fs-6 mb-1">Please completed a brief survey about your recent case - it should only take a few
+                minutes
+                of
+                your time.</p>
+            <p class="fs-6">The survey closes in <span class="text-primary">{{{expired_survey}}} days</span>, so let us
+                know your thoughts
+                soon.</p>
+        </div>
+        <div class="p-7 pt-12 bg-light-secondary border rounded" id="response-container"></div>
+        <div class="mt-15">
+            <div class="fs-7 text-center" id="survey-footer">{{{survey_footer}}}</div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<script>
+    const _survey_id = {{{ survey_id }}}
+    const _status = {{{ survey_status }}}
+    const _expired = "{{{ expired }}}"
+    let _survey_feedback = []
+
+    $(document).ready(async function () {
+        if (_expired == "expired") { // expired
+            $("#feedback-container").html(`
+                <div class="d-flex justify-content-between align-items-center survey-title w-100">
+                    <h3 class="fs-3 mb-5 px-5">We are sorry! This was already expired!</h3>
+                </div>`)
+            return
+        } else if (_expired == "submitted") { // submitted
+            $("#feedback-container").html(`
+                <div class="d-flex justify-content-between align-items-center survey-title w-100">
+                    <h3 class="fs-3 mb-5 px-5">You already submitted!</h3>
+                </div>
+            `)
+            return
+        } else if (_expired == "invalid") { // not existed
+            $("#feedback-container").html(`
+                <div class="d-flex justify-content-between align-items-center survey-title w-100">
+                    <h3 class="fs-3 mb-5 px-5">This is not existed!</h3>
+                </div>
+            `)
+            return
+        }
+
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/readSurveyView',
+            method: 'POST',
+            data: {
+                survey_id: _survey_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                if (res.data[0] != undefined && res.data[0] != null) {
+                    const views = JSON.parse(res.data[0].view)
+                    let html = ""
+                    let ques_num = 1
+                    views.forEach(view => {
+                        // render response items
+                        const resp_items = JSON.parse(view.resp.items)
+                        let resp_html = ""
+                        resp_items.forEach(item => {
+                            if (item.type == "numeric") {
+                                resp_html += `<div class="d-flex justify-content-start align-items-center m-2 mb-2">
+                                                  <input type="radio" style="width: 21px; height: 21px;" name="survey-${view.ques.ques_id}" id="survey-${view.ques.ques_id}-${item.value}" value="${item.value}" data-type="${item.type}" data-ques-id="${view.ques.ques_id}" data-resp-id="${view.resp.resp_id}" class="mx-1">
+                                                  <label for="survey-${view.ques.ques_id}-${item.value}" class="form-check-label fs-6 px-2"> ${item.name}</label>
+                                              </div>`
+                            } else if (item.type == "boolean") {
+                                resp_html += `<div class="d-flex justify-content-start align-items-center m-2 mb-2">
+                                                  <input type="radio" style="width: 21px; height: 21px;" name="survey-${view.ques.ques_id}" id="survey-${view.ques.ques_id}-${item.value}" value="${item.value == "0" ? 0 : 1}" data-type="${item.type}" data-ques-id="${view.ques.ques_id}" data-resp-id="${view.resp.resp_id}" class="mx-1">
+                                                  <label for="survey-${view.ques.ques_id}-${item.value}" class="form-check-label fs-6 px-2"> ${item.name}</label>
+                                              </div>`
+                            } else if (item.type == "rate") {
+                                resp_html += `<div class="rate-control px-5">
+                                                  <input type="hidden" class="rate-${view.ques.ques_id}" />
+                                                  <div class="rateit survey-${view.ques.ques_id}" data-id="${view.ques.ques_id}" data-rateit-mode="font" data-rateit-resetable="false" style="font-size: xxx-large" data-ques-id="${view.ques.ques_id}" data-type="${item.type}" data-resp-id="${view.resp.resp_id}"></div>
+                                              </div>`
+                            } else if (item.type == "num_rate") {
+                                let label = ""
+                                let value = JSON.parse(item.value)
+                                for (i = 0; i <= 10; i++) {
+                                    if (i == 0) {
+                                        label = value[0]
+                                    } else if (i == 10) {
+                                        label = value[1]
+                                    } else {
+                                        label = ""
+                                    }
+                                    if (i == 0) {
+                                        resp_html += `<div class="fs-6 m-2 mb-2 cursor-pointer" disable-drop="true">${label}</div>`
+                                    }
+                                    resp_html += `<div class="d-flex justify-content-start align-items-center m-2 mb-2">
+                                                      <input type="radio" style="width: 21px; height: 21px;" name="survey-${view.ques.ques_id}" id="survey-${view.ques.ques_id}-${i}" value="${i}" data-type="${item.type}" data-ques-id="${view.ques.ques_id}" data-resp-id="${view.resp.resp_id}" class="mx-1">
+                                                      <label for="survey-${view.ques.ques_id}-${i}" class="form-check-label fs-6 px-2"> ${i}</label>
+                                                  </div>`
+                                    if (i == 10) {
+                                        resp_html += `<div class="fs-6 m-2 mb-2 cursor-pointer" disable-drop="true">${label}</div>`
+                                    }
+                                }
+                            } else if (item.type == "text") {
+                                resp_html += `<div class="form-group my-3 w-100">
+                                                  <textarea class="form-control survey-${view.ques.ques_id}" rows="5" type="text" placeholder="Please don't enter any personal information." data-type="${item.type}" data-ques-id="${view.ques.ques_id}" data-resp-id="${view.resp.resp_id}"></textarea>
+                                              </div >`
+                            }
+                        })
+                        // render question items
+                        let ques_html = `<p class="fs-6 mb-1 question-${view.ques.ques_id}">${ques_num++}. ${view.ques.question} ${view.resp.required == 1 ? `<span class="text-danger">*</span>` : ""}</p>`
+                        // render all
+                        html += `<div class="survey-container mb-5">
+                                     ${ques_html}
+                                     <div class="d-flex fw-wrap justify-content-start">
+                                         ${resp_html}
+                                     </div>
+                                 </div>`
+
+                        _survey_feedback.push({
+                            ques_id: view.ques.ques_id,
+                            resp_id: 0,
+                            resp_type: '',
+                            response: '',
+                        })
+                    })
+                    $("#response-container").html(html)
+                    // render star rate
+                    const rate_components = document.querySelectorAll(".rateit")
+                    rate_components.forEach(ele => {
+                        const id = $(ele).attr("data-id")
+                        $(`.rate-${id}`).val("0")
+                        $(`.survey-${id}`).rateit({ max: 5, step: 1, backingfld: `.rate-${id}` })
+                        $(`.survey-${id}`).bind('rated', function (event, value) {
+                            // rate component
+                            const index = _survey_feedback.findIndex(o => o.ques_id == $(this).attr("data-ques-id"))
+                            _survey_feedback[index].resp_id = $(this).attr("data-resp-id")
+                            _survey_feedback[index].resp_type = $(this).attr("data-type")
+                            _survey_feedback[index].response = value
+                        })
+                    })
+
+                    // render submit button
+                    if (_status == 1) {
+                        $("#response-container").append(`
+                            <div class="w-100 d-flex justify-content-center align-items-center">
+                                <button class="btn btn-lg btn-light-danger" id="survey_submit">Submit</button>
+                            </div>
+                        `)
+                    }
+                } else {
+                    let html = "<p class='fs-4 d-flex justify-content-center align-items-center'>No Question</p>"
+                    $("#response-container").html(html)
+                }
+            }
+        })
+
+        // radio buttons
+        $(document).on('click', 'input[type="radio"]', function (e) {
+            const index = _survey_feedback.findIndex(o => o.ques_id == $(this).attr("data-ques-id"))
+            _survey_feedback[index].resp_id = $(this).attr("data-resp-id")
+            _survey_feedback[index].resp_type = $(this).attr("data-type")
+            _survey_feedback[index].response = e.target.value
+        })
+
+        // text areas
+        $(document).on('input', 'textarea', function (e) {
+            const index = _survey_feedback.findIndex(o => o.ques_id == $(this).attr("data-ques-id"))
+            _survey_feedback[index].resp_id = $(this).attr("data-resp-id")
+            _survey_feedback[index].resp_type = $(this).attr("data-type")
+            _survey_feedback[index].response = e.target.value
+        })
+
+        $(document).on("click", "#survey_submit", function () {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/feedback/submit',
+                method: 'POST',
+                data: {
+                    feedback: JSON.stringify(_survey_feedback),
+                    expired: _expired
+                },
+                dataType: 'text',
+                success: function (res) {
+                    if (res == "ok") {
+                        $("#feedback-container").html(`
+                            <div class="d-flex justify-content-between align-items-center survey-title w-100">
+                                <h3 class="fs-3 mb-5 px-5">Submitted Your Feedback Successfully!</h3>
+                            </div>
+                        `)
+                    }
+                }
+            })
+        })
+    })
+</script>

@@ -1,0 +1,1000 @@
+<div class="row">
+    <div class="col-md-12 bg-primary p-2 mb-2 text-white">
+        <div class="d-flex justify-content-around">
+            <div class="d-flex align-items-center" style="font-size:20px; font-weight:bold;">Community Services</div>
+            <ul class="nav nav-tabs nav-pills" data-tabs="tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#services" data-toggle="tab">
+                        Community Services
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#category" data-toggle="tab">
+                        Category
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="tab-content">
+            <div class="tab-pane active" id="services">
+
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h3 class="m-0">Community Services</h3>
+                            </div>
+                            <div class="ml-5">
+                                <select id='category_filter' class="form-control" type="text">
+                                    <option value="">All</option>
+                                    {{#each categories}}<option value='{{getProperty this ' en_name'}}'>{{getProperty
+                                        this 'en_name'}}</option>{{/each}}
+                                </select>
+                            </div>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="service_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i></div>
+                    </div>
+                    <div class="col-12">
+
+                        <div class="table-responsive">
+                            <table class="table" id="service_tb">
+                                <thead>
+                                    <th>Category</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Display</th>
+                                    <th style="width:180px;">Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane" id="category">
+
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div>
+                            <h3>Community Service Categories</h3>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="category_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="category_tb">
+                                <thead>
+                                    <th>English</th>
+                                    <th>Español</th>
+                                    <th>Display</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="category_add_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Add Category</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id='add_en_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id='add_es_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary category_add_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="category_edit_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Edit Category</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id='edit_en_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id='edit_es_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select class="form-control" id="edit_category_status" style="height:36px;">
+                                <option value="1">Visible</option>
+                                <option value="0">Invisible</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary category_edit_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="service_add_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Add Service</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Name(EN)</h6>
+                            <input id='add_en_name' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Name(ES)</h6>
+                            <input id='add_es_name' class="form-control" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary service_add_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="service_edit_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Edit Service</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Category</h6>
+                            <select id="edit_category" multiple class="form-control select2" style="width: 100%;">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Clinic Allowance</h6>
+                            <select id="edit_clinic_allowance" multiple class="form-control select2"
+                                style="width: 100%;">
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Name(EN)</h6>
+                            <input id="edit_en_name" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Name(ES)</h6>
+                            <input id="edit_es_name" class="form-control" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Address</h6>
+                            <input id="edit_address_1" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Address 2</h6>
+                            <input id="edit_address_2" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>City</h6>
+                            <input id="edit_city" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>State</h6>
+                            <input id="edit_state" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Zip</h6>
+                            <input id="edit_zip" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Country</h6>
+                            <input id="edit_country" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Phone</h6>
+                            <input id="edit_phone" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Fax</h6>
+                            <input id="edit_fax" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Email</h6>
+                            <input id="edit_email" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Link</h6>
+                            <input id="edit_link" class="form-control" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Description(EN)</h6>
+                            <div id="edit_en_desc"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Description(ES)</h6>
+                            <div id="edit_es_desc"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Detail(EN)</h6>
+                            <div id="edit_en_detail"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Detail(ES)</h6>
+                            <div id="edit_es_detail"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Additional</h6>
+                            <div id="edit_additional"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select class="form-control" id="edit_status" style="height:36px;">
+                                <option value="1">Visible</option>
+                                <option value="0">Invisible</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary service_edit_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="service_view_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">View Service</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6>Category</h6><span id="view_category"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Name(EN)</h6><span id="view_en_name"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Name(ES)</h6><span id="view_es_name"></span>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <h6>Address</h6><span id="view_address_1"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Address 2</h6><span id="view_address_2"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>City</h6><span id="view_city"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>State</h6><span id="view_state"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Zip</h6><span id="view_zip"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Country</h6><span id="view_country"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Phone</h6><span id="view_phone"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Fax</h6><span id="view_fax"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Email</h6><span id="view_email"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Link</h6><span id="view_link"></span>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <h6>Description(EN)</h6><span id="view_en_desc"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Description(ES)</h6><span id="view_es_desc"></span>
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <h6>Detail(EN)</h6><span id="view_en_detail"></span>
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <h6>Detail(ES)</h6><span id="view_es_detail"></span>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                        <h6>Additional</h6><span id="view_additional"></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <h6>Status</h6><span id="view_status"></span>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary service_edit_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="image_upload_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Upload Image (200px * 200px)</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class='col-md-12'>
+                        <div class="custom-file form-group">
+                            <input type="file" class="custom-file-input" id="fileInput" name="upload_image">
+                            <label class="custom-file-label" for="fileInput">Choose file</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary" data-dismiss="modal"
+                    onclick="uploadFile();">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="service_clinic_modal">
+    <div class="modal-dialog modal-md modal-dialog-scrollable">
+        <input type="hidden" id="modal_clinic_id" />
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">User Clinics</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="d-flex justify-content-start align-items-center px-5 mb-5 mx-1">
+                    <input type="checkbox" style="width: 24px; height: 24px;" id="service_clinic_all" class="mx-1"
+                        value="0" />
+                    <label for="service_clinic_all" class="align-items-center m-0">
+                        <h6 class="m-0">&nbsp;ALL</h6>
+                    </label>
+                </div>
+                <div class="separator separator-solid mb-5"></div>
+                <div class="row mx-1" id="service_clinic_list"></div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary" id="service_clinic_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const _categories = {{{ json categories }}}
+    const _clinics = {{{ json clinics }}}
+
+    let __item_count = _clinics.length
+    let __selected_item_count = 0
+    let __selected_clinic_btn = null
+
+    // category
+    let _html = ""
+    _categories.forEach(item => {
+        _html += `<option value=${item.id}>${item.en_name}</option>`
+    })
+    $("#edit_category").html(_html);
+
+    // clinic
+    _html = ""
+    let html_clinic = ""
+    _clinics.forEach(item => {
+        _html += `<option value=${item.clinic_id}>${item.name}</option>`
+        html_clinic += `<div class="col-md-12 d-flex justify-content-start align-items-center mx-5 mb-5">
+                            <input class="service_clinic_items" type="checkbox" style="width: 24px; height: 24px;" id="service_clinic_item_${item.clinic_id}" class="mx-1"
+                                value="${item.clinic_id}" />
+                            <label for="service_clinic_item_${item.clinic_id}" class="align-items-center m-0">
+                                <h6 class="m-0">&nbsp;${item.name}</h6>
+                            </label>
+                        </div>`
+    })
+    $("#edit_clinic_allowance").html(_html);
+    $("#service_clinic_list").html(html_clinic);
+
+    function uploadFile() {
+        var formData = new FormData();
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var id = window.id;
+        formData.append('file', file);
+        formData.append('id', id);
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/community_service/uploadServiceImage',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                handleTableResponse(data, '#service_tb', 'Upload');
+            }
+        });
+    }
+
+    $(document).ready(() => {
+
+        $('#edit_clinic_allowance').select2({
+            placeholder: "Select clinics to allow this service",
+            allowClear: true,
+            width: 'resolve' // makes the dropdown responsive
+        });
+        $('#edit_category').select2({
+            placeholder: "Select Categories",
+            allowClear: true,
+            width: 'resolve' // makes the dropdown responsive
+        });
+
+        $("#category_filter").on("change", function () {
+            service_tb.column(0).search($(this).val()).draw();
+        });
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+        $('#edit_en_desc').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_es_desc').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_en_detail').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_es_detail').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_additional').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        let service_tb = $('#service_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "order": [[2, 'asc']],
+            "ajax": {
+                "url": '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + "/community_service/readServices",
+                "type": "POST"
+            },
+            "columns": [
+                {
+                    data: 'category',
+                    render: function (data, type, row) {
+                        const list = JSON.parse(data);
+                        var res = "";
+                        list.map(item => {
+                            res += _categories.find(category => category.id == item)['en_name'] + ", ";
+                        });
+                        return res;
+                    }
+                },
+                {
+                    data: 'image',
+                    render: function (data, type, row) {
+                        return `<img src= "{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/community_service/` + row.image + `" width="100" />`;
+                    }
+                },
+                { data: 'en_name' },
+                { data: 'en_desc' },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class = '${row.status == 1 ? "text-success" : "text-danger"}'>${row.status == 1 ? "Visible" : "Invisible"}</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}" data-clinic='${row.clinic_allowance}'>
+                            <span class="btn btn-icon btn-sm btn-light-info service_clinic_btn"><i class="fa fa-hospital"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-primary image_upload_btn"><i class="fas fa-image"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-warning service_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-success service_view_btn"><i class="fas fa-eye"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  service_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".service_add_btn").click(function () {
+            $("#service_add_modal").modal('show');
+        });
+
+        $(".service_add_confirm").click(function () {
+            $.ajax({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/community_service/createService',
+                method: "POST",
+                data: { en_name: $("#add_en_name").val(), es_name: $("#add_es_name").val() },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#service_tb', 'Add');
+                }
+            });
+        });
+
+        $(document).on("click", ".service_edit_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/community_service/readOneService',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    $('#edit_clinic_allowance').val(JSON.parse(data['clinic_allowance'])).trigger('change');
+                    $('#edit_category').val(JSON.parse(data['category'])).trigger('change');
+
+                    $("#edit_en_name").val(data['en_name']);
+                    $("#edit_es_name").val(data['es_name']);
+
+                    $("#edit_address_1").val(data['address_1']);
+                    $("#edit_address_2").val(data['address_2']);
+                    $("#edit_city").val(data['city']);
+                    $("#edit_state").val(data['state']);
+                    $("#edit_zip").val(data['zip']);
+                    $("#edit_country").val(data['country']);
+                    $("#edit_phone").val(data['phone']);
+                    $("#edit_fax").val(data['fax']);
+                    $("#edit_email").val(data['email']);
+                    $("#edit_link").val(data['link']);
+
+                    $("#edit_en_desc").summernote("code", data['en_desc']);
+                    $("#edit_es_desc").summernote("code", data['es_desc']);
+                    $("#edit_en_detail").summernote("code", data['en_detail']);
+                    $("#edit_es_detail").summernote("code", data['es_detail']);
+                    $("#edit_additional").summernote("code", data['additional']);
+                    $("#edit_status").val(data['status']);
+                    $("#service_edit_modal").modal('show');
+                }
+            });
+        });
+
+        $(".service_edit_confirm").click(function () {
+            $.ajax({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/community_service/updateService',
+                method: "POST",
+                data: {
+                    id: window.id,
+
+                    category: JSON.stringify($('#edit_category').val()),
+                    clinic_allowance: JSON.stringify($('#edit_clinic_allowance').val()),
+
+                    en_name: $("#edit_en_name").val(),
+                    es_name: $("#edit_es_name").val(),
+
+                    address_1: $("#edit_address_1").val(),
+                    address_2: $("#edit_address_2").val(),
+                    city: $("#edit_city").val(),
+                    state: $("#edit_state").val(),
+                    zip: $("#edit_zip").val(),
+                    country: $("#edit_country").val(),
+                    phone: $("#edit_phone").val(),
+                    fax: $("#edit_fax").val(),
+                    email: $("#edit_email").val(),
+                    link: $("#edit_link").val(),
+
+                    en_desc: $("#edit_en_desc").summernote("code"),
+                    es_desc: $("#edit_es_desc").summernote("code"),
+                    en_detail: $("#edit_en_detail").summernote("code"),
+                    es_detail: $("#edit_es_detail").summernote("code"),
+                    additional: $("#edit_additional").summernote("code"),
+                    status: $("#edit_status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#service_tb', 'Update');
+                }
+            });
+        });
+
+
+        $(document).on("click", ".service_view_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/community_service/readOneService',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        const list = JSON.parse(data.category);
+                        var cate_names = "";
+                        list.map(item => {
+                            cate_names += _categories.find(category => category.id == item)['en_name'] + ", ";
+                        });
+
+                        $("#view_category").html(cate_names)
+                        $("#view_en_name").html(data['en_name']);
+                        $("#view_es_name").html(data['es_name']);
+
+                        $("#view_address_1").html(data['address_1']);
+                        $("#view_address_2").html(data['address_2']);
+                        $("#view_city").html(data['city']);
+                        $("#view_state").html(data['state']);
+                        $("#view_zip").html(data['zip']);
+                        $("#view_country").html(data['country']);
+                        $("#view_phone").html(data['phone']);
+                        $("#view_fax").html(data['fax']);
+                        $("#view_email").html(data['email']);
+                        $("#view_link").html(data['link']);
+
+                        $("#view_en_desc").html(data['en_desc']);
+                        $("#view_es_desc").html(data['es_desc']);
+                        $("#view_en_detail").html(data['en_detail']);
+                        $("#view_es_detail").html(data['es_detail']);
+                        $("#view_additional").html(data['additional']);
+                        $("#view_status").html(data['status'] == 1 ? 'Visible' : 'Invisible');
+                        $("#service_view_modal").modal('show');
+                    }
+                }
+            });
+        });
+
+        $(document).on("click", ".service_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/community_service/deleteService',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data = "ok")
+                                tmp.remove();
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on('click', '.image_upload_btn', function () {
+            var id = $(this).closest('div').attr('idkey');
+            window.id = id;
+            $("#image_upload_modal").modal('show');
+        });
+
+        let category_tb = $('#category_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 15, 20, -1],
+                [10, 15, 20, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "community_service/readCategories",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'en_name' },
+                { data: 'es_name' },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class = '${row.status == 1 ? "text-success" : "text-danger"}'>${row.status == 1 ? "Visible" : "Invisible"}</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="`+ row.id + `">
+                            <span class="btn btn-icon btn-sm btn-light-warning category_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  category_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".category_add_btn").click(function () {
+            $("#category_add_modal").modal('show');
+        });
+
+        $(".category_add_confirm").click(function () {
+            $.ajax({
+                url: 'community_service/createCategory',
+                method: "POST",
+                data: { en_name: $("#add_en_category").val(), es_name: $("#add_es_category").val() },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#category_tb', 'Add');
+                }
+            });
+        });
+
+        $(document).on("click", ".category_edit_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: 'community_service/readOneCategory',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    $("#edit_en_category").val(data['en_name']);
+                    $("#edit_es_category").val(data['es_name']);
+                    $("#edit_status").val(data['status']);
+                    $("#category_edit_modal").modal('show');
+                }
+            });
+        });
+
+        $(".category_edit_confirm").click(function () {
+            $.ajax({
+                url: 'community_service/updateCategory',
+                method: "POST",
+                data: { id: window.id, en_name: $("#edit_en_category").val(), es_name: $("#edit_es_category").val(), status: $("#edit_category_status").val() },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#category_tb', 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".category_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: 'community_service/deleteCategory',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data = "ok")
+                                tmp.remove();
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#service_clinic_all").click(function () {
+            if ($(this).prop('checked') == true) {
+                __selected_item_count = __item_count
+                $(".service_clinic_items").prop('checked', true)
+            } else {
+                __selected_item_count = 0
+                $(".service_clinic_items").prop('checked', false)
+            }
+        })
+
+        $(document).on("click", ".service_clinic_items", function () {
+            if ($(this).prop("checked") == true) {
+                __selected_item_count++
+                if (__selected_item_count == __item_count) {
+                    $("#service_clinic_all").prop("checked", true)
+                }
+            } else {
+                __selected_item_count--
+                $("#service_clinic_all").prop("checked", false)
+            }
+        })
+
+        $(document).on("click", ".service_clinic_btn", function () {
+            window.id = $(this).parent().attr("idkey")
+
+            const clinics = JSON.parse($(this).parent().attr("data-clinic"))
+
+            __selected_clinic_btn = $(this).parent()
+
+            $("#service_clinic_all").prop("checked", false)
+            $(".service_clinic_items").prop("checked", false)
+            clinics.forEach(clinic => {
+                $(`#service_clinic_item_${clinic}`).prop("checked", true)
+            })
+
+            if (__item_count == clinics.length) {
+                $("#service_clinic_all").prop("checked", true)
+            }
+
+            $("#service_clinic_modal").modal("show")
+        })
+
+        $("#service_clinic_modal_confirm").click(function () {
+            let clinics = []
+            const clinic_items = $(".service_clinic_items")
+            for (let i = 0; i < clinic_items.length; i++) {
+                if ($(clinic_items[i]).prop("checked") == true) {
+                    clinics.push($(clinic_items[i]).val())
+                }
+            }
+
+            $.ajax({
+                url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/community_service/updateClinic",
+                method: "POST",
+                data: {
+                    id: window.id,
+                    clinic_allowance: JSON.stringify(clinics)
+                },
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                        $("#service_clinic_modal").modal("hide")
+                        __selected_clinic_btn.attr("data-clinic", JSON.stringify(clinics))
+                    } else {
+                        toastr.error(data)
+                    }
+                }
+            })
+        })
+    });
+</script>

@@ -1,0 +1,199 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div>
+            <h3>Permissions</h3>
+        </div>
+        <div style="padding:10px 20px 10px 20px;" class="permission_add_btn btn btn-light-primary btn-icon"><i
+                class='fa fa-plus'></i></div>
+    </div>
+    <div class="col-12 mb-5">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="permission_tb">
+                <thead>
+                    <th class="text-center" style="width: 30%;">Name</th>
+                    <th class="text-center" style="width: 50%;">Assign To</th>
+                    <th class="text-center" style="width: 20%;">Actions</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="accordion" id="accordion_permission">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="permission_modal">
+    <div class="modal-dialog">
+        <input type="hidden" id="permission_modal_type" value="" />
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Permission Addition</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Permission Name</h6>
+                            <input id="permission_name" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Description</h6>
+                            <input id="permission_description" class="form-control" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary permission_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const renderPermissionAccordion = permissions => {
+        let html = ""
+        if (!permissions.length) {
+            html += `<div class="w-100 d-flex justify-content-center align-items-center my-10"><h1>No Permission</h1></div>`
+        } else {
+            let _permissions = []
+            permissions.forEach(permission => {
+                const prefix = permission.name.split("_")[0]
+                if (!_permissions[prefix]) {
+                    _permissions[prefix] = []
+                }
+                _permissions[prefix].push({
+                    id: permission.id,
+                    name: permission.name,
+                    desc: permission.description
+                })
+            })
+
+            for (var key in _permissions) {
+                let sub_html = ""
+                _permissions[key].forEach(item => {
+                    sub_html += `<tr class="w-100 mb-3">
+                                    <td style="width: 30%"><h5 class="d-flex justify-content-start align-items-center m-0 px-5">${item.name}</h5></td>
+                                    <td style="width: 50%"></td>
+                                    <td class="text-center" style="width: 20%">
+                                        <div data-id="${item.id}" data-name="${item.name}" data-desc="${item.desc}">
+                                            <span class="my-1 btn btn-light-primary permission_edit_btn"><i class="fas fa-edit"></i> Edit</span>
+                                            <span class="my-1 btn btn-light-danger permission_delete_btn"><i class="fas fa-trash"></i> Delete</span>
+                                        </div>
+                                    </td>
+                                </tr>`
+                })
+                html += `<div class="card">
+                            <div class="card-header" id="heading-${key}">
+                                <h3 class="card-title collapsed" data-toggle="collapse" data-target="#collapse-${key}"
+                                    aria-expanded="false" aria-controls="collapse-${key}">
+                                    <i class="icon">+</i> ${key}
+                                </h3>
+                            </div>
+                            <div id="collapse-${key}" class="collapse" aria-labelledby="heading-${key}" data-parent="#accordion_permission">
+                                <div class="card-body px-0">
+                                    <table class="w-100">
+                                        <tbody>${sub_html}</tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>`
+            }
+        }
+        $("#accordion_permission").html(html)
+    }
+
+    const loadPermissions = async () => {
+        await $.ajax({
+            url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/permission/readPermission",
+            method: "POST",
+            data: {},
+            success: function (data) {
+                renderPermissionAccordion(data.data)
+            }
+        })
+    }
+
+    $(document).ready(async function () {
+        await loadPermissions()
+
+        $(".permission_add_btn").click(function () {
+            $("#permission_modal_type").val("0")
+            $(".modal-title").text("Permission Addition")
+
+            $("#permission_name").val("");
+            $("#permission_description").val("");
+
+            $("#permission_modal").modal('show');
+        })
+
+        $(".permission_modal_confirm").click(async function () {
+            if (!$("#permission_name").val()) {
+                toastr.warning("Please input the permission name")
+                return
+            }
+            await $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/permission/${$("#permission_modal_type").val() == "0" ? "addPermission" : "updatePermission"}`,
+                method: "POST",
+                data: {
+                    id: window.id ?? 0,
+                    name: $("#permission_name").val(),
+                    description: $("#permission_description").val(),
+                },
+                dataType: "text",
+                success: async function (data) {
+                    toastr.success("Saved Successfully!");
+
+                    await loadPermissions()
+                }
+            });
+        })
+
+        $(document).on("click", ".permission_edit_btn", async function () {
+            $("#permission_modal_type").val("1")
+            $(".modal-title").text("Permission Edition")
+
+            window.id = $(this).parent().attr("data-id")
+
+            $("#permission_name").val($(this).parent().attr("data-name"))
+            $("#permission_description").val($(this).parent().attr("data-desc"))
+
+            $("#permission_modal").modal("show")
+        })
+
+        $(document).on("click", ".permission_delete_btn", async function () {
+            const permission_id = $(this).parent().attr("data-id")
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/permission/deletePermission',
+                        method: "POST",
+                        data: { id: permission_id },
+                        dataType: "text",
+                        success: async function (data) {
+                            if (data = "ok") {
+                                toastr.success("Deleted Successfully!")
+                                await loadPermissions()
+                            }
+                        }
+                    });
+                }
+            });
+        })
+    })
+</script>

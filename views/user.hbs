@@ -1,0 +1,605 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div>
+            <h3>Users</h3>
+        </div>
+        <div style="padding:10px 20px 10px 20px;" class="user_add_btn btn btn-light-primary btn-icon"><i
+                class='fa fa-plus'></i></div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="user_tb">
+                <thead>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="user_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <input type="hidden" id="modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">User</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3 mb-5">
+                        <label for="user-fname">First Name</label>
+                        <input class="form-control" id="user-fname" />
+                    </div>
+                    <div class="col-md-3 mb-5">
+                        <label for="user-lname">Last Name</label>
+                        <input class="form-control" id="user-lname" />
+                    </div>
+                    <div class="col-md-6 mb-5">
+                        <label for="user-email">Email</label>
+                        <input class="form-control" id="user-email" />
+                    </div>
+                    <div class="col-md-8 mb-5">
+                        <label for="user-address">Address</label>
+                        <input class="form-control" id="user-address" />
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-city">City</label>
+                        <input class="form-control" id="user-city" />
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-state">State</label>
+                        <select id="user_state" class="form-control custom-select">
+                            <optgroup label="Alaskan/Hawaiian Time Zone">
+                                <option value="AK">Alaska</option>
+                                <option value="HI">Hawaii</option>
+                            </optgroup>
+                            <optgroup label="Pacific Time Zone">
+                                <option value="CA">California</option>
+                                <option value="NV">Nevada</option>
+                                <option value="OR">Oregon</option>
+                                <option value="WA">Washington</option>
+                            </optgroup>
+                            <optgroup label="Mountain Time Zone">
+                                <option value="AZ">Arizona</option>
+                                <option value="CO">Colorado</option>
+                                <option value="ID">Idaho</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="UT">Utah</option>
+                                <option value="WY">Wyoming</option>
+                            </optgroup>
+                            <optgroup label="Central Time Zone">
+                                <option value="AL">Alabama</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TX">Texas</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="WI">Wisconsin</option>
+                            </optgroup>
+                            <optgroup label="Eastern Time Zone">
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="IN">Indiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NY" selected>New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="OH">Ohio</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WV">West Virginia</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-zip">Zip</label>
+                        <input class="form-control" id="user-zip" />
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-phone">Phone</label>
+                        <input class="form-control" id="user-phone" />
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-fax">Fax</label>
+                        <input class="form-control" id="user-fax" />
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-role">Role</label>
+                        <select id="user-role" class="form-control custom-select"></select>
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <label for="user-status">Status</label>
+                        <select id="user-status" class="form-control custom-select">
+                            <option value="0">Inactive</option>
+                            <option value="1">Active</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary user_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="user_password_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Edit Password</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 mb-5">
+                        <label for="user-password">Password</label>
+                        <input class="form-control" id="user-password" type="password" />
+                    </div>
+                    <div class="col-md-12 mb-5">
+                        <label for="user-repassword">Password Confirm</label>
+                        <input class="form-control" id="user-repassword" type="password" />
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary user_password_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="user_question_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Edit Security Question</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 mb-5">
+                        <div class="form-group">
+                            <h6>Question</h6>
+                            <select id="user-question" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-5">
+                        <label for="user-answer">Answer</label>
+                        <input class="form-control" id="user-answer" type="password" />
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary user_question_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="user_clinic_modal">
+    <div class="modal-dialog modal-md modal-dialog-scrollable">
+        <input type="hidden" id="modal_clinic_id" />
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">User Clinics</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="d-flex justify-content-start align-items-center px-5 mb-5 mx-1">
+                    <input type="checkbox" style="width: 24px; height: 24px;" id="user_clinic_all" class="mx-1"
+                        value="0" />
+                    <label for="user_clinic_all" class="align-items-center m-0">
+                        <h6 class="m-0">&nbsp;ALL</h6>
+                    </label>
+                </div>
+                <div class="separator separator-solid mb-5"></div>
+                <div class="row mx-1" id="user_clinic_list"></div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary" id="user_clinic_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let __item_count = 0
+    let __selected_item_count = 0
+    let __selected_clinic_btn = null
+    const _colors = ["danger", "primary", "success", "info", "warning"]
+    $(document).ready(async () => {
+        // role
+        await $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/role/readRole',
+            method: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                let html = ""
+                data.data.forEach(item => {
+                    html += `<option value="${item.id}">${item.name}</option>`
+                })
+                $("#user-role").html(html)
+            }
+        })
+
+        // question
+        await $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/squestion/read',
+            method: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                let html = ""
+                data.data.forEach(item => {
+                    html += `<option value="${item.id}">${item.question}</option>`
+                })
+                $("#user-question").html(html)
+            }
+        })
+
+        // clinic
+        await $.ajax({
+            url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/clinic/readOnlyNames",
+            method: "POST",
+            data: {},
+            dataType: 'json',
+            success: function (res) {
+                let html = ""
+                __item_count = res.data.length
+                res.data.forEach(item => {
+                    html += `<div class="col-md-12 d-flex justify-content-start align-items-center mx-5 mb-5">
+                                <input class="user_clinic_items" type="checkbox" style="width: 24px; height: 24px;" id="user_clinic_item_${item.id}" class="mx-1"
+                                    value="${item.id}" />
+                                <label for="user_clinic_${item.id}" class="align-items-center m-0">
+                                    <h6 class="m-0">&nbsp;${item.name}</h6>
+                                </label>
+                            </div>`
+                })
+                $("#user_clinic_list").html(html)
+            }
+        })
+
+        let user_tb = $('#user_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/user/readUser",
+                "type": "POST"
+            },
+            "columns": [
+                {
+                    data: 'fname',
+                    render: function (data, type, row) {
+                        return `${row.fname} ${row.lname}`
+                    }
+                },
+                { data: 'email' },
+                { data: 'phone' },
+                {
+                    data: 'role_id',
+                    render: function (data, type, row) {
+                        return `<span class="p-2 text-${_colors[row.role_id % 5]} bg-light-${_colors[row.role_id % 5]} rounded">${row.role.name}</span>`
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? '<span class="p-2 text-success bg-light-success rounded">Active</span>' : '<span class="p-2 text-danger bg-light-danger rounded">Inactive</span>'
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}" data-clinic="${row.clinics}">
+                            <span class="btn btn-icon btn-sm btn-light-primary user_clinic_btn"><i class="fa fa-hospital"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-warning user_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-info user_question_btn"><i class="fa fa-question-circle"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-primary user_password_btn"><i class="fas fa-key"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  user_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".user_add_btn").click(function () {
+            $("#modal_type").val("0")
+
+            $("#user-fname").val("");
+            $("#user-lname").val("");
+            $("#user-email").val("");
+            $("#user-phone").val("");
+            $("#user-fax").val("");
+            $("#user-address").val("");
+            $("#user-city").val("");
+            $("#user-state").val("");
+            $("#user-zip").val("");
+            $("#user-role").val("1");
+            $("#user-status").val("2");
+
+            $("#user_modal").modal('show');
+        });
+
+        $(".user_modal_confirm").click(function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/user/${$("#modal_type").val() == "0" ? 'createUser' : 'updateUser'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    fname: $("#user-fname").val(),
+                    lname: $("#user-lname").val(),
+                    email: $("#user-email").val(),
+                    phone: $("#user-phone").val(),
+                    fax: $("#user-fax").val(),
+                    address: $("#user-address").val(),
+                    city: $("#user-city").val(),
+                    state: $("#user-state").val(),
+                    zip: $("#user-zip").val(),
+                    role_id: $("#user-role").val(),
+                    status: $("#user-status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                        $("#user_tb").DataTable().ajax.reload()
+                    }
+                }
+            });
+        });
+
+        $(document).on("click", ".user_edit_btn", function () {
+            $("#modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/user/readOneUserById',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    if (data.message == "ok") {
+                        const info = data.data
+                        $("#user-fname").val(info['fname']);
+                        $("#user-lname").val(info['lname']);
+                        $("#user-email").val(info['email']);
+                        $("#user-phone").val(info['phone']);
+                        $("#user-fax").val(info['fax']);
+                        $("#user-role").val(info['role_id']);
+                        $("#user-status").val(info['status']);
+                        $("#user-address").val(info['address']);
+                        $("#user-city").val(info['city']);
+                        $("#user-state").val(info['state']);
+                        $("#user-zip").val(info['zip']);
+                        $("#user-status").val(info['status']);
+
+                        $("#user_modal").modal('show');
+                    } else {
+                        toastr.error(data.message)
+                    }
+                }
+            });
+        });
+
+        $(document).on("click", ".user_question_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+
+            $("#user_question_modal").modal("show")
+        });
+
+        $(".user_question_modal_confirm").click(function () {
+            let entry = {
+                user_id: window.id,
+                question_id: $("#user-question").val(),
+                answer: $("#user-answer").val()
+            }
+            $.ajax({
+                url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/user/setAnswer",
+                method: "POST",
+                data: entry,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                        $("#user_question_modal").modal("hide")
+                    } else {
+                        toastr.error(data)
+                    }
+                }
+            })
+        })
+
+        $(document).on("click", ".user_password_btn", function () {
+            window.id = $(this).parent().attr("idkey")
+
+            $("#user-password").val("")
+            $("#user-repassword").val("")
+
+            $("#user_password_modal").modal("show")
+        })
+
+        $(".user_password_modal_confirm").click(function () {
+            if ($("#user-password").val() == "") {
+                toastr.warning("Please input the password!")
+                return
+            } else if ($("#user-password").val() != $("#user-repassword").val()) {
+                toastr.warning("Password is not correct! Please enter again!")
+                $("#user-repassword").val("")
+                return
+            }
+
+            $.ajax({
+                url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/user/updatePassword",
+                method: "POST",
+                data: {
+                    id: window.id,
+                    password: $("#user-password").val()
+                },
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                        $("#user_password_modal").modal("hide")
+                    } else {
+                        toastr.error(data)
+                    }
+                }
+            })
+        })
+
+        $(document).on("click", ".user_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/user/deleteUser',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                $('#user_tb').DataTable().ajax.reload()
+                                toastr.success("Deleted Successfully!")
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#user_clinic_all").click(function () {
+            if ($(this).prop('checked') == true) {
+                __selected_item_count = __item_count
+                $(".user_clinic_items").prop('checked', true)
+            } else {
+                __selected_item_count = 0
+                $(".user_clinic_items").prop('checked', false)
+            }
+        })
+
+        $(document).on("click", ".user_clinic_items", function () {
+            if ($(this).prop("checked") == true) {
+                __selected_item_count++
+                if (__selected_item_count == __item_count) {
+                    $("#user_clinic_all").prop("checked", true)
+                }
+            } else {
+                __selected_item_count--
+                $("#user_clinic_all").prop("checked", false)
+            }
+        })
+
+        $(document).on("click", ".user_clinic_btn", function () {
+            window.id = $(this).parent().attr("idkey")
+
+            const clinics = $(this).parent().attr("data-clinic").split(",")
+
+            __selected_clinic_btn = $(this).parent()
+
+            $("#user_clinic_all").prop("checked", false)
+            $(".user_clinic_items").prop("checked", false)
+            clinics.forEach(clinic => {
+                $(`#user_clinic_item_${clinic}`).prop("checked", true)
+            })
+
+            if (__item_count == clinics.length) {
+                $("#user_clinic_all").prop("checked", true)
+            }
+
+            $("#user_clinic_modal").modal("show")
+        })
+
+        $("#user_clinic_modal_confirm").click(function () {
+            let clinics = []
+            const clinic_items = $(".user_clinic_items")
+            for (let i = 0; i < clinic_items.length; i++) {
+                if ($(clinic_items[i]).prop("checked") == true) {
+                    clinics.push($(clinic_items[i]).val())
+                }
+            }
+
+            $.ajax({
+                url: "{{env.HOST_URL}}{{env.PREFIX_URL}}/user/updateClinic",
+                method: "POST",
+                data: {
+                    id: window.id,
+                    clinics: clinics.join(",")
+                },
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                        $("#user_clinic_modal").modal("hide")
+                        __selected_clinic_btn.attr("data-clinic", clinics.join(","))
+                    } else {
+                        toastr.error(data)
+                    }
+                }
+            })
+        })
+    });
+</script>

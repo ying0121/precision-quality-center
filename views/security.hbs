@@ -1,0 +1,40 @@
+<div class="row justify-content-md-center h-100">
+    <div class="card-wrapper">
+        <div style="height:200px;" class="d-flex align-items-center justify-content-center">
+            <h1>Precision Quality Central Control</h1>
+        </div>
+        <div class="card fat mx-auto" style="width:350px;">
+            <div class="card-body">
+                <h3 class="card-title d-flex justify-content-center mb-7">User Security</h3>
+                <form action="{{env.HOST_URL}}{{env.PREFIX_URL}}/security" id="securityForm" method="POST"
+                    class="my-security-validation" novalidate="">
+                    <div class="form-group mb-3">
+                        <h4>{{question}}</h4>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAnswer">Answer</label>
+                        <div class="password-container">
+                            <input id="inputAnswer" type="password" class="form-control" name="inputAnswer" required
+                                data-eye>
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                        <div class="invalid-feedback">
+                            Answer is required
+                        </div>
+                    </div>
+
+                    {{#if errorMessage}}
+                    <div class="alert alert-danger" role="alert">
+                        {{errorMessage}}
+                    </div>
+                    {{/if}}
+                    <div class="form-group mt-5">
+                        <button type="button" id="btnAnswerSubmit" class="btn btn-primary btn-block">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

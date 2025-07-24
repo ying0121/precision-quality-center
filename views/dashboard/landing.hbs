@@ -1,0 +1,672 @@
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <link rel="icon" href="{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/icon.png" sizes="32x32" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/plugins/global/plugins.bundle.css?v=7.0.5" rel="stylesheet"
+    type="text/css" />
+
+  <script src="{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/plugins/global/plugins.bundle.js?v=7.0.5"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/js/animations/p5.js" type="text/javascript"></script>
+
+  <title>PRECISION QUALITY</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* scroll bar */
+    /* For WebKit browsers */
+    ::-webkit-scrollbar {
+      width: 2px;
+      /* Width of the scrollbar */
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      /* Background of the scrollbar track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      /* Color of the scrollbar thumb */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+      /* Color when hovered */
+    }
+
+
+    .d-none {
+      display: none !important;
+    }
+
+    @keyframes long-width-320 {
+      from {
+        width: 0px;
+        padding: 0px;
+      }
+
+      to {
+        width: 320px;
+        padding: 8px;
+      }
+    }
+
+    @keyframes long-height-680 {
+      from {
+        height: 0px;
+      }
+
+      to {
+        height: 680px;
+      }
+    }
+
+    @keyframes opacity {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+</body>
+<script>
+  let words = []
+  const wordsequelize = {{{ json wordlist }}}
+  wordsequelize.forEach(item => {
+    words.push({
+      display: item.code,
+      color: item.color,
+      description: item.description,
+    })
+  })
+
+  const config = {{{ json config }}}
+  config.bg_footer = config.bg_footer.replace("$year$", new Date().getFullYear())
+
+  // Define the global variables.
+  // The wordObjects variable will contain all the
+  // wordObjects in the canvas.
+  let wordObjects = [];
+
+  // The threshold variable will be used to check
+  // if the mobile device has been moved enough to
+  // initiate a response.
+  let threshold = 30;
+
+  // accChangeX and accChangeY will measure the acceleration
+  // when the mobile device is moved.
+  let accChangeX = 0;
+  let accChangeY = 0;
+
+  // accChangeT will be used to calculate the overall change
+  // for the mobile device's position.
+  let accChangeT = 0;
+
+  let bgImg = null;
+  let bgVideo = null;
+  let logoImg = null;
+
+  // contact form
+  let input_name = null;
+  let input_email = null;
+  let input_phone = null;
+  let text_message = null;
+  let input_best = null;
+  let button_submit = null;
+
+  let _show_contact_form = false;
+
+  function drawWrappedText(t, x, y, mw) {
+    textSize(16)
+    textAlign("center", "bottom")
+    let words = t.split(' '); // Split text into words
+    let line = ''; // Initialize an empty line
+    let yOffsetCurrent = y; // Current y position
+
+    for (let i = 0; i < words.length; i++) {
+      let testLine = line + words[i] + ' '; // Test line with the next word
+      let testWidth = textWidth(testLine); // Measure the width of the test line
+
+      if (words[i] == "" || words[i] == "\n") {
+        text(line, x, yOffsetCurrent); // Draw the current line
+        line = words[i] + ' '; // Start a new line with the current word
+        yOffsetCurrent += 20; // Move down for the next line
+        textSize(13)
+      } else {
+        if (testWidth > mw && i > 0) { // If the line exceeds the max width
+          text(line, x, yOffsetCurrent); // Draw the current line
+          line = words[i] + ' '; // Start a new line with the current word
+          yOffsetCurrent += 20; // Move down for the next line
+        } else {
+          line = testLine; // Otherwise, continue building the line
+        }
+      }
+    }
+
+    text(line, x, yOffsetCurrent); // Draw any remaining text
+  }
+
+
+  function preload() {
+    if (config.bg_status == "image") {
+      bgImg = loadImage(`{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${config.bg_url}`);
+    }
+    logoImg = loadImage('{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/logo.png');
+  }
+
+  function setup() {
+    textFont('Arial');
+    // Create a canvas that fills the entire viewport display.
+    createCanvas(window.innerWidth, window.innerHeight);
+
+    if (config.bg_status == "video") {
+      bgVideo = createVideo([`{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${config.bg_url}`]);
+
+      bgVideo.autoplay();
+      bgVideo.volume(0);
+      bgVideo.hide();
+      bgVideo.loop();
+    }
+
+    // Create words variable sized instances of the WordObject class.
+    for (let i = 0; i < words.length; i++) {
+      wordObjects.push(new WordObject());
+    }
+
+    // create contact show button
+    let contact_show_button = createElement('Submit', '<i class="fa-solid fa-keyboard"></i>');
+    contact_show_button.position(25, 25);
+    contact_show_button.style('width', '45px');
+    contact_show_button.style('height', '45px');
+    contact_show_button.style('color', 'white');
+    contact_show_button.style('font-size', '24px');
+    contact_show_button.style('display', 'flex');
+    contact_show_button.style('justify-content', 'center');
+    contact_show_button.style('align-items', 'center');
+    contact_show_button.style('background-color', '#AAAAAA80');
+    contact_show_button.style('border', '1px solid #00000000');
+    contact_show_button.style('border-radius', '999px');
+    contact_show_button.style('box-shadow', '10px 10px 10px #00000040');     // Shadow
+    contact_show_button.style('cursor', 'pointer');     // cursor-pointer
+    contact_show_button.style('transition', 'all .5s');     // Animation
+    contact_show_button.mouseOver(() => {
+      contact_show_button.style('background', '#3c9bfd80'); // Default border
+    });
+    contact_show_button.mouseOut(() => {
+      contact_show_button.style('background', '#AAAAAA80'); // Default border
+    });
+    contact_show_button.mousePressed(showContactUsForm);
+
+    // create contact form
+    // 0. container tag begin //
+    let form_container = createElement('div');
+    form_container.position(70, 70);
+    form_container.style('background', '#80808050');
+    form_container.style('width', '420px');     // Width
+    form_container.style('height', '680px');     // Height
+    form_container.style('border', '1px solid #00000000');     // Border
+    form_container.style('border-radius', '20px');     // Border Radius
+    form_container.style('box-shadow', '10px 10px 10px #00000040');     // Shadow
+    form_container.class('contact-form-element contact-container d-none');
+    // animation
+    form_container.style('animation-name', 'long-height-680');
+    form_container.style('animation-duration', '0.7s');
+    // 0. container tag end //
+    // 1. title tag begin //
+    let title_tag = createElement('span', 'Contact Us');
+    title_tag.position(160, 70);
+    title_tag.style('background', '#00000000');
+    title_tag.style('color', 'white');
+    title_tag.style('font-family', 'Arial');
+    title_tag.style('font-size', '40px'); // Font size
+    title_tag.style('padding', '24px');    // Padding
+    title_tag.style('cursor', 'pointer');
+    title_tag.class('contact-form-element contact-title d-none');
+    title_tag.style('opacity', '0');
+    // animation
+    title_tag.style('animation-name', 'opacity');
+    title_tag.style('animation-duration', '0.7s');
+    title_tag.style('animation-delay', '0.7s');
+    title_tag.style('animation-fill-mode', 'forwards');
+    // 1. title tag end //
+    // 2. name tag begin //
+    input_name = createInput();
+    input_name.position(120, 160);
+    input_name.style('background', '#FFFFFF05');
+    input_name.style('color', 'white');
+    input_name.style('font-family', 'Arial');
+    input_name.style('font-size', '16px'); // Font size
+    input_name.style('padding', '0px');    // Padding
+    input_name.style('border', '1px solid #FFFFFF05'); // Border
+    input_name.style('border-bottom', '2px solid #FFFFFF88'); // Border
+    input_name.style('width', '320px');     // Width
+    input_name.style('outline', 'none');     // Remove outline on focus
+    input_name.style('transition', 'all .5s');     // Animation
+    input_name.style('width', '0');
+    input_name.mouseOver(() => {
+      input_name.style('border-bottom', '2px solid #20FA10CE'); // Hover border
+    });
+    input_name.mouseOut(() => {
+      input_name.style('border-bottom', '2px solid #FFFFFF88'); // Default border
+    });
+    input_name.attribute('placeholder', 'Your Name *');
+    input_name.class('contact-form-element contact-name d-none');
+    // animation
+    input_name.style('animation-name', 'long-width-320');
+    input_name.style('animation-duration', '0.7s');
+    input_name.style('animation-delay', '0.7s');
+    input_name.style('animation-fill-mode', 'forwards');
+    // 2. name tag end //
+    // 3. email tag begin //
+    input_email = createInput();
+    input_email.position(120, 220);
+    input_email.style('background', '#FFFFFF05');
+    input_email.style('color', 'white');
+    input_email.style('font-family', 'Arial');
+    input_email.style('font-size', '16px'); // Font size
+    input_email.style('padding', '0px');    // Padding
+    input_email.style('border', '1px solid #FFFFFF05'); // Border
+    input_email.style('border-bottom', '2px solid #FFFFFF88'); // Border
+    input_email.style('width', '320px');     // Width
+    input_email.style('outline', 'none');     // Remove outline on focus
+    input_email.style('transition', 'all .5s');     // Animation
+    input_email.style('width', '0');
+    input_email.mouseOver(() => {
+      input_email.style('border-bottom', '2px solid #20FA10CE'); // Hover border
+    });
+    input_email.mouseOut(() => {
+      input_email.style('border-bottom', '2px solid #FFFFFF88'); // Default border
+    });
+    input_email.attribute('placeholder', 'Your Email *');
+    input_email.class('contact-form-element contact-email d-none');
+    // animation
+    input_email.style('animation-name', 'long-width-320');
+    input_email.style('animation-duration', '0.7s');
+    input_email.style('animation-delay', '0.7s');
+    input_email.style('animation-fill-mode', 'forwards');
+    // 3. email tag end //
+    // 4. phone tag begin //
+    input_phone = createInput();
+    input_phone.position(120, 280);
+    input_phone.style('background', '#FFFFFF05');
+    input_phone.style('color', 'white');
+    input_phone.style('font-family', 'Arial');
+    input_phone.style('font-size', '16px'); // Font size
+    input_phone.style('padding', '0px');    // Padding
+    input_phone.style('border', '1px solid #FFFFFF05'); // Border
+    input_phone.style('border-bottom', '2px solid #FFFFFF88'); // Border
+    input_phone.style('width', '320px');     // Width
+    input_phone.style('outline', 'none');     // Remove outline on focus
+    input_phone.style('transition', 'all .5s');     // Animation
+    input_phone.style('width', '0');
+    input_phone.mouseOver(() => {
+      input_phone.style('border-bottom', '2px solid #20FA10CE'); // Hover border
+    });
+    input_phone.mouseOut(() => {
+      input_phone.style('border-bottom', '2px solid #FFFFFF88'); // Default border
+    });
+    input_phone.attribute('placeholder', 'Your Phone Number *');
+    input_phone.class('contact-form-element contact-phone d-none');
+    // animation
+    input_phone.style('animation-name', 'long-width-320');
+    input_phone.style('animation-duration', '0.7s');
+    input_phone.style('animation-delay', '0.7s');
+    input_phone.style('animation-fill-mode', 'forwards');
+    // 4. phone tag end //
+    // 5. message tag begin //
+    text_message = createElement('textarea');
+    text_message.position(120, 340);
+    text_message.style('background', '#FFFFFF05');
+    text_message.style('color', 'white');
+    text_message.style('font-family', 'Arial');
+    text_message.style('font-size', '16px'); // Font size
+    text_message.style('padding', '0px');    // Padding
+    text_message.style('border', '1px solid #FFFFFF05'); // Border
+    text_message.style('border-bottom', '2px solid #FFFFFF88'); // Border
+    text_message.style('width', '320px');     // Width
+    text_message.style('outline', 'none');     // Remove outline on focus
+    text_message.style('transition', 'all .5s');     // Animation
+    text_message.style('width', '0');
+    text_message.mouseOver(() => {
+      text_message.style('border-bottom', '2px solid #20FA10CE'); // Hover border
+    });
+    text_message.mouseOut(() => {
+      text_message.style('border-bottom', '2px solid #FFFFFF88'); // Default border
+    });
+    text_message.attribute('placeholder', 'Please leave comment *');
+    text_message.attribute('rows', '6');
+    text_message.class('contact-form-element contact-message d-none');
+    // animation
+    text_message.style('animation-name', 'long-width-320');
+    text_message.style('animation-duration', '0.7s');
+    text_message.style('animation-delay', '0.7s');
+    text_message.style('animation-fill-mode', 'forwards');
+    // 5. message tag end //
+    // 6. best time tag begin //
+    input_best = createInput();
+    input_best.position(120, 500);
+    input_best.style('background', '#FFFFFF05');
+    input_best.style('color', 'white');
+    input_best.style('font-family', 'Arial');
+    input_best.style('font-size', '16px'); // Font size
+    input_best.style('padding', '0px');    // Padding
+    input_best.style('border', '1px solid #FFFFFF05'); // Border
+    input_best.style('border-bottom', '2px solid #FFFFFF88'); // Border
+    input_best.style('width', '320px');     // Width
+    input_best.style('outline', 'none');     // Remove outline on focus
+    input_best.style('transition', 'all .5s');     // Animation
+    input_best.style('width', '0');
+    input_best.mouseOver(() => {
+      input_best.style('border-bottom', '2px solid #20FA10CE'); // Hover border
+    });
+    input_best.mouseOut(() => {
+      input_best.style('border-bottom', '2px solid #FFFFFF88'); // Default border
+    });
+    input_best.attribute('placeholder', 'Best Time To Reach You');
+    input_best.class('contact-form-element contact-best d-none');
+    // animation
+    input_best.style('animation-name', 'long-width-320');
+    input_best.style('animation-duration', '0.7s');
+    input_best.style('animation-delay', '0.7s');
+    input_best.style('animation-fill-mode', 'forwards');
+    // 6. best time tag end //
+    // 7. captcha tag begin //
+    let captcha_div = createElement('div');
+    captcha_div.position(130, 560);
+    captcha_div.attribute('class', 'g-recaptcha');
+    captcha_div.attribute('data-sitekey', '{{{ site_key }}}');
+    captcha_div.style('width', '0');
+    captcha_div.style('opacity', '0');
+    grecaptcha.render(captcha_div.elt, {
+      'sitekey': '{{{ site_key }}}'
+    })
+    captcha_div.class('contact-form-element contact-captcha d-none');
+    // animation
+    captcha_div.style('animation-name', 'opacity');
+    captcha_div.style('animation-duration', '0.7s');
+    captcha_div.style('animation-delay', '0.7s');
+    captcha_div.style('animation-fill-mode', 'forwards');
+    // 7. captcha tag end //
+    // 8. submit button tag begin //
+    button_submit = createButton('Submit');
+    button_submit.position(220, 670);
+    button_submit.style('background', '#FFFFFF00');
+    button_submit.style('color', '#fd9c6b');
+    button_submit.style('font-size', '16px'); // Font size
+    button_submit.style('padding', '12px 24px');    // Padding
+    button_submit.style('border', '1px solid #fd9c6b'); // Border
+    button_submit.style('border-radius', '5px'); // Border
+    button_submit.style('outline', 'none');     // Remove outline on focus
+    button_submit.style('transition', 'all .2s');     // Remove outline on focus
+    button_submit.style('cursor', 'pointer');     // cursor-pointer
+    button_submit.style('opacity', '0');
+    button_submit.mouseOver(() => {
+      button_submit.style('background', '#fd9c6b'); // Default border
+      button_submit.style('color', 'white');
+    });
+    button_submit.mouseOut(() => {
+      button_submit.style('background', '#FFFFFF00'); // Default border
+      button_submit.style('color', '#fd9c6b');
+    });
+    button_submit.mousePressed(submit);
+    button_submit.class('contact-form-element contact-submit d-none');
+    // animation
+    button_submit.style('animation-name', 'opacity');
+    button_submit.style('animation-duration', '0.7s');
+    button_submit.style('animation-delay', '0.7s');
+    button_submit.style('animation-fill-mode', 'forwards');
+    // 8. submit button tag end //
+    // placeholder color begin //
+    let placeholderColor = document.createElement('style');
+    placeholderColor.innerHTML = `
+        input::placeholder, textarea::placeholder {
+            color: lightgray; /* Change this to your desired color */
+            opacity: 1; /* Optional: Default is 0.5 */
+        }
+    `;
+    document.head.appendChild(placeholderColor);
+    // placeholder color end //
+  }
+
+  function draw() {
+    let w = window.innerWidth
+    let h = window.innerHeight
+
+    background(0);
+
+    // set background
+    if (config.bg_status == "image") {
+      image(bgImg, 0, 0, w, h);
+    } else if (config.bg_status == "video") {
+      image(bgVideo, 0, 0, w, h);
+    }
+
+    // For each word object created, move the word object
+    // in response to the measurements gathered
+    // by the checkForShake() function.
+    if (config.bg_text == true) {
+      for (let i = 0; i < wordObjects.length; i++) {
+        wordObjects[i].move();
+        wordObjects[i].display(words[i].display, words[i].color);
+      }
+      checkForShake();
+    }
+    image(logoImg, (w - logoImg.width) / 2, (h - logoImg.height) / 2);
+
+    // footer
+    let maxWidth = w * 0.5
+    drawWrappedText(config.bg_footer, w / 2, h - 90, maxWidth)
+  }
+
+  function checkForShake() {
+    // Calculate the total change for accelerationX and accelerationY.
+    accChangeX = abs(accelerationX - pAccelerationX);
+    accChangeY = abs(accelerationY - pAccelerationY);
+
+    // Calculate the overall change in the mobile device's acceleration.
+    accChangeT = accChangeX + accChangeY;
+
+    // If the overall change meets or is greater than the threshold,
+    // call the shake() and turn() methods and change the direction
+    // and speed of each word object.
+    if (accChangeT >= threshold) {
+      for (let i = 0; i < wordObjects.length; i++) {
+        wordObjects[i].shake();
+        wordObjects[i].turn();
+      }
+    }
+    // If the overall change doesn't meet the threshold,
+    // gradually slow down the word object movement.
+    else {
+      for (let i = 0; i < wordObjects.length; i++) {
+        wordObjects[i].stopShake();
+        wordObjects[i].turn();
+        wordObjects[i].move();
+      }
+    }
+  }
+
+  // Create the WordObject class.
+  class WordObject {
+    constructor() {
+      // Make each word object created have a random size, speed, and starting
+      // placement in the canvas.
+      this.x = random(width);
+      this.y = random(height);
+      this.diameter = random(10, 30);
+      this.xspeed = random(-1.5, 1.5);
+      this.yspeed = random(-1.5, 1.5);
+      this.xdirection = 0.7;
+      this.ydirection = 0.7;
+      this.textSize = random(16, 48);
+
+      // oxspeed will be used to calculate the decrease in speed in the
+      // stopShake() method.
+      this.oxspeed = this.xspeed;
+      this.oyspeed = this.yspeed;
+    }
+
+    // Whenever the word object's move() method is called,
+    // multiply its speed and xdirection of movement
+    // and have that equal its new placement in the canvas.
+    move() {
+      this.x += this.xspeed * this.xdirection;
+      this.y += this.yspeed * this.ydirection;
+    }
+
+    // If the word object ever touches the edge of the canvas,
+    // have it bounce off the edge.
+    turn() {
+      if (this.x < 0) {
+        this.x = 0;
+        this.xdirection = -this.xdirection;
+      } else if (this.y < 0) {
+        this.y = 0;
+        this.ydirection = -this.ydirection;
+      } else if (this.x > width - 20) {
+        this.x = width - 20;
+        this.xdirection = -this.xdirection;
+      } else if (this.y > height - 20) {
+        this.y = height - 20;
+        this.ydirection = -this.ydirection;
+      }
+    }
+
+    // Whenever the word object's shake() method is called,
+    // add to the speed of the word object based on
+    // the change in the accelerationX value.
+    shake() {
+      this.xspeed += random(5, accChangeX / 3);
+      this.yspeed += random(5, accChangeX / 3);
+    }
+
+    // Whenever the word object's stopShake() method is called,
+    // gradually slow down its speed.
+    stopShake() {
+      if (this.xspeed > this.oxspeed) {
+        this.xspeed -= 0.6;
+      } else {
+        this.xspeed = this.oxspeed;
+      }
+      if (this.yspeed > this.oyspeed) {
+        this.yspeed -= 0.6;
+      } else {
+        this.yspeed = this.oyspeed;
+      }
+    }
+
+    // Draw the word object on the canvas, given its randomized diameter
+    // and current coordinates calculated with the methods listed above.
+    display(word, color) {
+      if (word != undefined && word != null && word != '') {
+        textSize(this.textSize);
+        if (color != undefined && color != null && color != '') {
+          fill(color);
+        } else {
+          fill('white');
+        }
+        text(word, this.x, this.y);
+      }
+    }
+  }
+
+  function windowResized() {
+    resizeCanvas(window.innerWidth, window.innerHeight);
+  }
+
+  function submit() {
+    // validation
+    if (!input_name.value()) {
+      input_name.style('border-bottom', '2px solid #FA2010CE'); // border
+      toastr.warning("Invalid name!", "", { progressBar: true });
+      return
+    }
+    if (!input_email.value()) {
+      input_email.style('border-bottom', '2px solid #FA2010CE'); // border
+      toastr.warning("Invalid email!", "", { progressBar: true });
+      return
+    }
+    if (!input_phone.value()) {
+      input_phone.style('border-bottom', '2px solid #FA2010CE'); // border
+      toastr.warning("Invalid phone number!", "", { progressBar: true });
+      return
+    }
+    if (!text_message.value()) {
+      text_message.style('border-bottom', '2px solid #FA2010CE'); // border
+      toastr.warning("Invalid message!", "", { progressBar: true });
+      return
+    }
+
+    // captcha
+    const response = grecaptcha.getResponse();
+    if (response.length === 0) {
+      toastr.error("Invalid reCAPTCHA!", "", { progressBar: true });
+    } else {
+      $.ajax({
+        url: `{{env.HOST_URL}}/sendmail`,
+        method: "POST",
+        data: {
+          name: input_name.value(),
+          email: input_email.value(),
+          phone: input_phone.value(),
+          message: text_message.value(),
+          best_time: input_best.value()
+        },
+        dataType: 'json',
+        success: function (res) {
+          if (res.status == "success") {
+            toastr.success("Sent Successfully!", "", { progressBar: true });
+
+            input_name.value("");
+            input_email.value("");
+            input_phone.value("");
+            text_message.value("");
+            input_best.value("");
+          } else {
+            toastr.error("Faild in send message!", "", { progressBar: true });
+          }
+        },
+        error: function (error) {
+          toastr.error("Error was occurred on the server!", "", { progressBar: true });
+        }
+      })
+    }
+  }
+
+  function showContactUsForm() {
+    const elements = document.getElementsByClassName('contact-form-element')
+    if (!_show_contact_form) {
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove("d-none");
+      }
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.add("d-none");
+      }
+    }
+    _show_contact_form = !_show_contact_form
+  }
+
+</script>
+
+</html>

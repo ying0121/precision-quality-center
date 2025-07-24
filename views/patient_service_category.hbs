@@ -1,0 +1,212 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div>
+            <h3>Patient Service Categories</h3>
+        </div>
+        <div style="padding:10px 20px 10px 20px;" class="category_add_btn btn btn-light-primary btn-icon"><i
+                class='fa fa-plus'></i></div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="category_tb">
+                <thead>
+                    <th>English</th>
+                    <th>Español</th>
+                    <th>Display</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="category_add_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Add Category</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id='add_en_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id='add_es_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary category_add_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="category_edit_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Edit Category</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id='edit_en_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id='edit_es_category' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select class="form-control" id="edit_status" style="height:36px;">
+                                <option value="1">Visible</option>
+                                <option value="0">Invisible</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary category_edit_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(() => {
+        let category_tb = $('#category_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "patient_service/readCategories",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'en_name' },
+                { data: 'es_name' },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class = '${row.status == 1 ? "text-success" : "text-danger"}'>${row.status == 1 ? "Visible" : "Invisible"}</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="`+ row.id + `">
+                            <a href="${'patient_service/service?category_id=' + row.id}" target="_blank">
+                                <span class="btn btn-icon btn-sm btn-light-primary">
+                                    <i class="fa fa-list-alt"></i>
+                                </span>
+                            </a>
+                            <span class="btn btn-icon btn-sm btn-light-warning category_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  category_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".category_add_btn").click(function () {
+            $("#category_add_modal").modal('show');
+        });
+        $(".category_add_confirm").click(function () {
+            $.ajax({
+                url: 'patient_service/createCategory',
+                method: "POST",
+                data: { en_name: $("#add_en_category").val(), es_name: $("#add_es_category").val() },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#category_tb', 'Add');
+                }
+            });
+        });
+        $(document).on("click", ".category_edit_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: 'patient_service/readOneCategory',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    $("#edit_en_category").val(data['en_name']);
+                    $("#edit_es_category").val(data['es_name']);
+                    $("#edit_status").val(data['status']);
+                    $("#category_edit_modal").modal('show');
+                }
+            });
+        });
+        $(".category_edit_confirm").click(function () {
+            $.ajax({
+                url: 'patient_service/updateCategory',
+                method: "POST",
+                data: { id: window.id, en_name: $("#edit_en_category").val(), es_name: $("#edit_es_category").val(), status: $("#edit_status").val() },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#category_tb', 'Update');
+                }
+            });
+        });
+        $(document).on("click", ".category_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: 'patient_service/deleteCategory',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data = "ok")
+                                tmp.remove();
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

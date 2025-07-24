@@ -1,0 +1,37 @@
+{
+  "name": "Medical Center",
+  "version": "1.0.0",
+  "description": "Central Site for Clinics",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Maksym Kamark",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.11",
+    "@types/sequelize": "^4.28.20",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "connect-session-sequelize": "^7.0.1",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-handlebars": "^5.1.0",
+    "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^2.1.0",
+    "nodemailer": "^6.10.0",
+    "sequelize": "^6.3.4",
+    "striptags": "^3.2.0",
+    "twilio": "^5.4.2",
+    "validator": "^13.1.1"
+  }
+}

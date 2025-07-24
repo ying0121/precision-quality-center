@@ -1,0 +1,1470 @@
+<style>
+    div.tagsinput span.tag {
+        border: 1px solid #4abad2;
+        background: #dcf2ff;
+        color: #005e8d;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12 bg-primary p-2 mb-2 text-white">
+        <div class="d-flex justify-content-around">
+            <div class="d-flex align-items-center" style="font-size:20px; font-weight:bold;">Survey Settings</div>
+            <ul class="nav nav-tabs nav-pills" data-tabs="tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#cate" data-toggle="tab">
+                        Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#types" data-toggle="tab">
+                        Types
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#questions" data-toggle="tab">
+                        Questions
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#responses" data-toggle="tab">
+                        Responses
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#footer" data-toggle="tab">
+                        Footer
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="tab-content">
+            <div class="tab-pane active" id="cate">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div>
+                            <h3>Categories</h3>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="survey_cate_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="survey_cate_tb">
+                                <thead>
+                                    <th>English</th>
+                                    <th>Español</th>
+                                    <th>Event Status</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="types">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div>
+                            <h3>Survey Types</h3>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="survey_type_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="survey_type_tb">
+                                <thead>
+                                    <th>English</th>
+                                    <th>Español</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="questions">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div>
+                            <h3>Survey Questions</h3>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="survey_ques_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="survey_ques_tb">
+                                <thead>
+                                    <th>Survey</th>
+                                    <th>Text</th>
+                                    <th>Language</th>
+                                    <th>Required</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="responses">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-5 d-flex justify-content-between align-items-center my-5">
+                        <div class="px-5">
+                            <h3>Survey Responses</h3>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="survey_resp_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="survey_resp_tb">
+                                <thead>
+                                    <th>Key</th>
+                                    <th>Language</th>
+                                    <th>Response Items</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="footer">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-5 d-flex justify-content-between align-items-center my-5">
+                        <div class="px-5">
+                            <h3>Survey Footer</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-5">
+                        <h4 class="m-0 mx-3 mb-3">Language: </h4>
+                        <select class="form-control w-300px" id="survey_footer_language"></select>
+                    </div>
+                    <div class="col-md-8 mb-10">
+                        <h3 class="px-2">Footer Text</h3>
+                        <div class="summernote" id="footer_text"></div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-start">
+                        <div class="btn btn-light-primary" id="survey_footer_update_btn">Update</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="ques_type">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div>
+                            <h3>Survey Question Types</h3>
+                        </div>
+                        <div style="padding:10px 20px 10px 20px;"
+                            class="survey_ques_type_add_btn btn btn-light-primary btn-icon"><i class='fa fa-plus'></i>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="survey_ques_type_tb">
+                                <thead>
+                                    <th>Code</th>
+                                    <th>Display(EN)</th>
+                                    <th>Display(ES)</th>
+                                    <th>Type</th>
+                                    <th>Field Value</th>
+                                    <th>Actions</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="survey_cate_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="survey_cate_modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Survey Categories</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id="survey_cate_name_en" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id="survey_cate_name_es" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="survey_cate_e_status" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="survey_cate_status" class="form-control">
+                                <option value="0">Inactive</option>
+                                <option value="1">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary survey_cate_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="survey_type_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="survey_type_modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Survey Types</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id="survey_type_name_en" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id="survey_type_name_es" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="survey_type_status" class="form-control">
+                                <option value="0">Inactive</option>
+                                <option value="1">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary survey_type_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="survey_ques_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="survey_ques_modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Survey Questions</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Language</h6>
+                            <select class="form-control" id="survey_ques_language"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Survey</h6>
+                            <select class="form-control" id="survey_ques_survey"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Text</h6>
+                            <input id="survey_ques_text" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Choice Text</h6>
+                            <input id="survey_ques_choice_text" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Required</h6>
+                            <select id="survey_ques_required" class="form-control">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="survey_ques_status" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary survey_ques_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="survey_resp_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <input type="hidden" id="survey_resp_modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Survey Response Key</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Language</h6>
+                            <select class="form-control" id="survey_resp_language"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Key</h6>
+                            <input id="survey_resp_key" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12 survey_resp_item_container">
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" class="btn btn-light-primary survey_resp_add_item">Add New
+                            Response</button>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="survey_resp_status" class="form-control">
+                                <option value="0">Inactive</option>
+                                <option value="1">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-start align-items-center mx-1">
+                            <input type="checkbox" style="width: 24px; height: 24px;" id="survey_resp_required"
+                                class="mx-1" value="0" />
+                            <label for="survey_resp_required" class="align-items-center m-0">
+                                <h6 class="m-0">&nbsp;Required</h6>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary survey_resp_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="survey_ques_type_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="survey_ques_type_modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Survey Question Types</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Code</h6>
+                            <input id="survey_ques_type_code" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Display (EN)</h6>
+                            <input id="survey_ques_type_display_en" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Display (ES)</h6>
+                            <input id="survey_ques_type_display_es" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Field Value</h6>
+                            <select id="survey_ques_type_vtype" class="form-control mb-3">
+                                <option value="text">Text</option>
+                                <option value="phone">Phone</option>
+                                <option value="email">Email</option>
+                                <option value="date">Date</option>
+                                <option value="textarea">TextArea</option>
+                            </select>
+                            <input id="survey_ques_type_field_value_text" placeholder="input text"
+                                class="survey_ques_type_field_value form-control" type="text" />
+                            <input id="survey_ques_type_field_value_phone" placeholder="(123) 456 7890"
+                                class="survey_ques_type_field_value form-control d-none" type="text" />
+                            <input id="survey_ques_type_field_value_email" placeholder="yourname@email.com"
+                                class="survey_ques_type_field_value form-control d-none" type="text" />
+                            <input id="survey_ques_type_field_value_date"
+                                class="survey_ques_type_field_value form-control d-none" type="date" />
+                            <textarea id="survey_ques_type_field_value_textarea" rows="5" placeholder="leave a comment"
+                                class="survey_ques_type_field_value form-control d-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary survey_ques_type_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // survey response
+    let _resp_item_id = 0
+    let _resp_items = []
+
+    function changeRate(event, value) {
+        const index = _resp_items.findIndex(item => item.id === parseInt($(event.target).attr("data-id")))
+        if (index >= 0) {
+            _resp_items[index].value = value
+        }
+    }
+
+    $(document).ready(async () => {
+        $(".summernote").summernote({
+            height: 150
+        });
+
+        // language
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/language/read',
+            method: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (res) {
+                const data = res.data
+                let html = ""
+                data.forEach(lang => {
+                    if (lang.code == "en") {
+                        html += `<option value="${lang.id}" selected>${lang.english}</option>`
+                    } else {
+                        html += `<option value="${lang.id}">${lang.english}</option>`
+                    }
+                })
+                $("#survey_ques_language").html(html);
+                $("#survey_resp_language").html(html);
+                $("#survey_footer_language").html(html);
+            }
+        });
+
+        // surcey
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/read',
+            method: 'POST',
+            data: {
+                lang_id: 17
+            },
+            dataType: 'json',
+            success: function (res) {
+                const data = res.data
+                let html = ""
+                data.forEach(cate => {
+                    html += `<option value="${cate.id}">${cate.name}</option>`
+                })
+                $("#survey_ques_survey").html(html);
+            }
+        });
+
+        // event status
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readEventStatus',
+            method: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (res) {
+                const data = res.data
+                let html = ""
+                data.forEach(e_status => {
+                    html += `<option value="${e_status.id}">${e_status.display}</option>`
+                })
+                $("#survey_cate_e_status").html(html);
+            }
+        });
+
+        // survey category
+        let survey_cate_tb = await $('#survey_cate_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyCategory",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'name_en' },
+                { data: 'name_es' },
+                {
+                    data: 'event_status',
+                    render: function (data, type, row) {
+                        return row.event_status ? row.event_status.display : ''
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? `<span class="bg-light-primary text-primary rounded p-3">Active</span>` : `<span class="bg-light-danger text-danger rounded p-3">Inactive</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning survey_cate_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  survey_cate_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".survey_cate_add_btn").click(async function () {
+            $("#survey_cate_modal_type").val("0")
+
+            $("#survey_cate_name_en").val("");
+            $("#survey_cate_name_es").val("");
+            $("#survey_cate_status").val("1");
+
+            $("#survey_cate_modal").modal('show');
+        });
+
+        $(".survey_cate_modal_confirm").click(async function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/${$("#survey_cate_modal_type").val() == "0" ? 'addSurveyCategory' : 'updateSurveyCategory'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    name_en: $("#survey_cate_name_en").val(),
+                    name_es: $("#survey_cate_name_es").val(),
+                    e_status: $("#survey_cate_e_status").val(),
+                    status: $("#survey_cate_status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#survey_cate_tb', $("#survey_cate_modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_cate_edit_btn", async function () {
+            $("#survey_cate_modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readOneSurveyCategory',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (res) {
+                    const data = res.data
+                    $("#survey_cate_name_en").val(data['name_en']);
+                    $("#survey_cate_name_es").val(data['name_es']);
+                    $("#survey_cate_e_status").val(data['e_status']);
+                    $("#survey_cate_status").val(data['status']);
+
+                    $("#survey_cate_modal").modal('show');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_cate_delete_btn", async function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/deleteSurveyCategory',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                toastr.success("Deleted Successfully!")
+                                survey_cate_tb.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // survey types
+        let survey_type_tb = await $('#survey_type_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyTypes",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'name_en' },
+                { data: 'name_es' },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? `<span class="bg-light-primary text-primary rounded p-3">Active</span>` : `<span class="bg-light-danger text-danger rounded p-3">Inactive</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning survey_type_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  survey_type_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".survey_type_add_btn").click(async function () {
+            $("#survey_type_modal_type").val("0")
+
+            $("#survey_type_name_en").val("");
+            $("#survey_type_name_es").val("");
+            $("#survey_type_status").val("1");
+
+            $("#survey_type_modal").modal('show');
+        });
+
+        $(".survey_type_modal_confirm").click(async function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/${$("#survey_type_modal_type").val() == "0" ? 'addSurveyTypes' : 'updateSurveyTypes'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    name_en: $("#survey_type_name_en").val(),
+                    name_es: $("#survey_type_name_es").val(),
+                    status: $("#survey_type_status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#survey_type_tb', $("#survey_type_modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_type_edit_btn", async function () {
+            $("#survey_type_modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readOneSurveyTypes',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (res) {
+                    const data = res.data
+                    $("#survey_type_name_en").val(data['name_en']);
+                    $("#survey_type_name_es").val(data['name_es']);
+                    $("#survey_type_status").val(data['status']);
+
+                    $("#survey_type_modal").modal('show');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_type_delete_btn", async function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/deleteSurveyTypes',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                toastr.success("Deleted Successfully!")
+                                survey_type_tb.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // survey questions
+        let survey_ques_tb = await $('#survey_ques_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyQuestion",
+                "type": "POST"
+            },
+            "columns": [
+                {
+                    data: 'survey',
+                    render: function (data, type, row) {
+                        return data ? data.survey : ''
+                    }
+                },
+                {
+                    data: 'text',
+                    render: function (data, type, row) {
+                        return `<div class="w-100">${row.text}</div>`
+                    }
+                },
+                {
+                    data: 'language',
+                    render: function (data, type, row) {
+                        return data.lang
+                    }
+                },
+                {
+                    data: 'required',
+                    render: function (data, type, row) {
+                        return row.required == 1 ? `<span class="bg-light-success text-success rounded p-3">Yes</span>` : `<span class="bg-light-danger text-danger rounded p-3">No</span>`
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? `<span class="bg-light-primary text-primary rounded p-3">Active</span>` : `<span class="bg-light-danger text-danger rounded p-3">Inactive</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning survey_ques_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  survey_ques_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".survey_ques_add_btn").click(async function () {
+            $("#survey_ques_modal_type").val("0")
+
+            $("#survey_ques_text").val("");
+            $("#survey_ques_choice_text").val("");
+            $("#survey_ques_required").val("1");
+            $("#survey_ques_status").val("1");
+
+            $("#survey_ques_modal").modal('show');
+        });
+
+        $(".survey_ques_modal_confirm").click(async function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/${$("#survey_ques_modal_type").val() == "0" ? 'addSurveyQuestion' : 'updateSurveyQuestion'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    survey_id: $("#survey_ques_survey").val(),
+                    language_id: $("#survey_ques_language").val(),
+                    text: $("#survey_ques_text").val(),
+                    choice_text: $("#survey_ques_choice_text").val(),
+                    status: $("#survey_ques_status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#survey_ques_tb', $("#survey_ques_modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_ques_edit_btn", async function () {
+            $("#survey_ques_modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readOneSurveyQuestion',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (res) {
+                    const data = res.data
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/read',
+                        method: 'POST',
+                        data: {
+                            lang_id: data['language_id']
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            const result = res.data
+                            let html = ""
+                            result.forEach(cate => {
+                                html += `<option value="${cate.id}">${cate.name}</option>`
+                            })
+                            $("#survey_ques_survey").html(html);
+
+                            $("#survey_ques_survey").val(data['survey_id']);
+                            $("#survey_ques_language").val(data['language_id']);
+                            $("#survey_ques_text").val(data['text']);
+                            $("#survey_ques_choice_text").val(data['choice_text']);
+                            $("#survey_ques_required").val(data['required']);
+                            $("#survey_ques_status").val(data['status']);
+
+                            $("#survey_ques_modal").modal('show');
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_ques_delete_btn", async function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/deleteSurveyQuestion',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                toastr.success("Deleted Successfully!")
+                                survey_ques_tb.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $("#survey_ques_language").change(function (e) {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/read',
+                method: 'POST',
+                data: {
+                    lang_id: e.target.value
+                },
+                dataType: 'json',
+                success: function (res) {
+                    const data = res.data
+                    let html = ""
+                    data.forEach(cate => {
+                        html += `<option value="${cate.id}">${cate.name}</option>`
+                    })
+                    $("#survey_ques_survey").html(html);
+                }
+            });
+        })
+
+        // survey footer
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyFooter',
+            method: 'POST',
+            data: {
+                lang_id: $("#survey_footer_language").val() ?? 17
+            },
+            dataType: 'json',
+            success: function (res) {
+                const data = res.data
+                if (data) {
+                    $("#footer_text").summernote("code", data["footer"])
+                }
+            },
+            error: function (error) {
+                toastr.error(error)
+            }
+        })
+
+        $("#survey_footer_update_btn").click(async function () {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/setSurveyFooter',
+                method: 'POST',
+                data: {
+                    lang_id: $("#survey_footer_language").val(),
+                    footer: $("#footer_text").summernote("code"),
+                },
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                    } else {
+                        toastr.error("Failed in Action!")
+                    }
+                },
+                error: function (error) {
+                    toastr.error(error)
+                }
+            })
+        })
+
+        $("#survey_footer_language").change(function (e) {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyFooter',
+                method: 'POST',
+                data: {
+                    lang_id: e.target.value
+                },
+                dataType: 'json',
+                success: function (res) {
+                    const data = res.data
+                    if (data) {
+                        $("#footer_text").summernote("code", data["footer"])
+                    } else {
+                        $("#footer_text").summernote("code", "")
+                    }
+                },
+                error: function (error) {
+                    toastr.error(error)
+                }
+            })
+        })
+
+        // survey response
+        let survey_resp_tb = await $("#survey_resp_tb").DataTable({
+            responsive: true,
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyResponse",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'key' },
+                {
+                    data: 'language',
+                    render: function (data, type, row) {
+                        return data.english
+                    }
+                },
+                {
+                    data: 'items',
+                    render: function (data, type, row) {
+                        const items = JSON.parse(row.items)
+                        if (items.length == 0) {
+                            return "No Types"
+                        } else {
+                            let html = ""
+                            items.forEach(item => {
+                                let css_color = ""
+                                if (item.type == "text") {
+                                    css_color = "bg-light-primary text-primary"
+                                } else if (item.type == "numeric") {
+                                    css_color = "bg-light-success text-success"
+                                } else if (item.type == "boolean") {
+                                    css_color = "bg-light-danger text-danger"
+                                } else if (item.type == "rate") {
+                                    css_color = "bg-light-info text-info"
+                                } else if (item.type == "num_rate") {
+                                    css_color = "bg-light-secondary text-secondary"
+                                }
+                                html += `<span class="m-2 py-2 px-5 ${css_color} bordered rounded cursor-pointer">${item.name ? item.name : item.type}</span>`
+                            })
+                            html = `<div style="display: flex; flex-wrap: wrap;">${html}</div>`
+                            return html
+                        }
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? `<span class="bg-light-primary text-primary rounded p-3">Active</span>` : `<span class="bg-light-danger text-danger rounded p-3">Inactive</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning survey_resp_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  survey_resp_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        })
+
+        $(".survey_resp_add_btn").click(async function () {
+            _resp_item_id = 0
+            _resp_items = []
+            $(".survey_resp_item_container").html("")
+
+            $("#survey_resp_modal_type").val("0")
+
+            $("#survey_resp_key").val("");
+            $("#survey_resp_status").val("1");
+
+            $("#survey_resp_required").prop("checked", true)
+
+            $("#survey_resp_modal").modal('show');
+        });
+
+        $(".survey_resp_modal_confirm").click(async function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/${$("#survey_resp_modal_type").val() == "0" ? 'addSurveyResponse' : 'updateSurveyResponse'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    key: $("#survey_resp_key").val(),
+                    lang_id: $("#survey_resp_language").val(),
+                    items: JSON.stringify(_resp_items),
+                    status: $("#survey_resp_status").val(),
+                    required: $("#survey_resp_required").prop("checked") == true ? 1 : 0
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#survey_resp_tb', $("#survey_resp_modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_resp_edit_btn", async function () {
+            $("#survey_resp_modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readOneSurveyResponse',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (res) {
+                    const data = res.data
+                    $("#survey_resp_key").val(data['key'])
+                    $("#survey_resp_language").val(data['lang_id'])
+                    $("#survey_resp_status").val(data['status'])
+                    $("#survey_resp_required").prop("checked", data['required'] == 1 ? true : false)
+
+                    // items
+                    let html = ""
+                    _resp_items = []
+                    let items = JSON.parse(data.items)
+                    items.forEach(item => {
+                        _resp_items.push(item)
+                        let value = null
+                        if (item.type == "num_rate") {
+                            if (item.value != "") {
+                                value = JSON.parse(item.value)
+                            } else {
+                                value[0] = ""
+                                value[1] = ""
+                            }
+                        } else { // text, boolean, numeric, star rate
+                            value = item.value
+                        }
+                        html += `<div class="row" container-id="${item.id}">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <input data-id="${item.id}" value="${item.name}" class="form-control survey_resp_item_name survey_resp_item_name_${item.id}" placeholder="Label" type="text" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <select data-id="${item.id}" class="form-control survey_resp_item_value_type survey_resp_item_value_type-${item.id}">
+                                                    <option value="text">Text</option>
+                                                    <option value="boolean">Boolean</option>
+                                                    <option value="numeric">Numeric</option>
+                                                    <option value="rate">Star Rate</option>
+                                                    <option value="num_rate">Number Rate</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input value="${value}" data-id="${item.id}" class="form-control survey_resp_item_value survey_resp_item_value_${item.id} survey_resp_item_value_${item.id}-text d-none" placeholder="Text" type="text" ${$("#survey_resp_required").prop("checked") == true ? "" : "disabled"} />
+                                                <input value="${value}" data-id="${item.id}" class="form-control survey_resp_item_value survey_resp_item_value_${item.id} survey_resp_item_value_${item.id}-numeric" placeholder="Numeric" type="number" ${$("#survey_resp_required").prop("checked") == true ? "" : "disabled"} />
+                                                <select data-id="${item.id}" class="form-control survey_resp_item_value survey_resp_item_value_${item.id} survey_resp_item_value_${item.id}-boolean" ${$("#survey_resp_required").prop("checked") == true ? "" : "disabled"}>
+                                                    <option value="1" ${value == "1" ? "selected" : ""}>True</option>
+                                                    <option value="0" ${value == "0" ? "selected" : ""}>False</option>
+                                                </select>
+                                                <input type="hidden" id="survey_resp_item_value_${item.id}-rate-backing" value="${value}" />
+                                                <div data-rateit-value="${value}" data-id="${item.id}" class="rateit survey_resp_item_value survey_resp_item_value_${item.id} survey_resp_item_value_${item.id}-rate" data-rateit-mode="font" data-rateit-resetable="false" style="font-size: xx-large"></div>
+                                                <input value="${value[0]}" data-id="${item.id}" data-value="0" class="form-control survey_resp_item_value survey_resp_item_value_${item.id} survey_resp_item_value_${item.id}-num_rate survey_resp_item_value_${item.id}-num_rate1 mb-2" placeholder="Text1" type="text" />
+                                                <input value="${value[1]}" data-id="${item.id}" data-value="1" class="form-control survey_resp_item_value survey_resp_item_value_${item.id} survey_resp_item_value_${item.id}-num_rate survey_resp_item_value_${item.id}-num_rate2" placeholder="Text2" type="text" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <div class="btn btn-light-danger btn-icon survey_resp_item_delete" data-id="${item.id}"><i class='fa fa-trash'></i></div>
+                                            </div>
+                                        </div>
+                                    </div>`
+                        _resp_item_id = _resp_item_id < item.id ? item.id : _resp_item_id
+                    })
+                    _resp_item_id++
+
+                    $(".survey_resp_item_container").html(html)
+
+                    // for all component
+                    items.forEach(item => {
+                        $(`.survey_resp_item_value_type-${item.id}`).val(item.type).trigger("change")
+                    })
+                    $("#survey_resp_modal").modal('show')
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_resp_delete_btn", async function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/deleteSurveyResponse',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                toastr.success("Deleted Successfully!")
+                                survey_resp_tb.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".survey_resp_add_item").click(async function () {
+            let html = `<div class="row" container-id="${_resp_item_id}">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input data-id="${_resp_item_id}" class="form-control survey_resp_item_name survey_resp_item_name_${_resp_item_id}" placeholder="Label" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <select data-id="${_resp_item_id}" class="form-control survey_resp_item_value_type survey_resp_item_value_type-${_resp_item_id}">
+                                        <option value="text">Text</option>
+                                        <option value="boolean">Boolean</option>
+                                        <option value="numeric">Numeric</option>
+                                        <option value="rate">Star Rate</option>
+                                        <option value="num_rate">Number Rate</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input data-id="${_resp_item_id}" class="form-control survey_resp_item_value survey_resp_item_value_${_resp_item_id} survey_resp_item_value_${_resp_item_id}-text" placeholder="Text" type="text" />
+                                    <input data-id="${_resp_item_id}" class="form-control survey_resp_item_value survey_resp_item_value_${_resp_item_id} survey_resp_item_value_${_resp_item_id}-numeric d-none" placeholder="Numeric" type="number" value="0" />
+                                    <select data-id="${_resp_item_id}" class="form-control survey_resp_item_value survey_resp_item_value_${_resp_item_id} survey_resp_item_value_${_resp_item_id}-boolean d-none">
+                                        <option value="1">True</option>
+                                        <option value="0">False</option>
+                                    </select>
+                                    <input type="hidden" id="survey_resp_item_value_${_resp_item_id}-rate-backing" />
+                                    <div data-id="${_resp_item_id}" class="rateit survey_resp_item_value survey_resp_item_value_${_resp_item_id} survey_resp_item_value_${_resp_item_id}-rate d-none" data-rateit-mode="font" data-rateit-resetable="false" style="font-size: xx-large"></div>
+                                    <input data-id="${_resp_item_id}" data-value="0" class="form-control survey_resp_item_value survey_resp_item_value_${_resp_item_id} survey_resp_item_value_${_resp_item_id}-num_rate survey_resp_item_value_${_resp_item_id}-num_rate1 d-none mb-2" placeholder="Text1" type="text" />
+                                    <input data-id="${_resp_item_id}" data-value="1" class="form-control survey_resp_item_value survey_resp_item_value_${_resp_item_id} survey_resp_item_value_${_resp_item_id}-num_rate survey_resp_item_value_${_resp_item_id}-num_rate2 d-none" placeholder="Text2" type="text" />
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <div class="btn btn-light-danger btn-icon survey_resp_item_delete" data-id="${_resp_item_id}"><i class='fa fa-trash'></i></div>
+                                </div>
+                            </div>
+                        </div>`
+            $(".survey_resp_item_container").append(html)
+
+            $(".survey_resp_item_value").prop("disabled", !$("#survey_resp_required").prop("checked"))
+            $(`.survey_resp_item_value_${_resp_item_id}-text`).addClass("d-none")
+
+            _resp_items.push({
+                id: _resp_item_id,
+                name: "",
+                type: "text",
+                value: ""
+            })
+            _resp_item_id++
+        })
+
+        $(document).on("click", ".survey_resp_item_delete", function () {
+            const index = _resp_items.findIndex(item => item.id === parseInt($(this).attr("data-id")))
+            if (index !== -1) {
+                _resp_items.splice(index, 1)
+            }
+            $(this).parent().parent().parent().remove()
+        })
+
+        $(document).on("input", ".survey_resp_item_name", function (e) {
+            const index = _resp_items.findIndex(item => item.id === parseInt($(this).attr("data-id")))
+            _resp_items[index].name = e.target.value
+        })
+
+        $(document).on("change", ".survey_resp_item_value_type", function (e) {
+            const index = _resp_items.findIndex(item => item.id === parseInt($(this).attr("data-id")))
+            _resp_items[index].type = e.target.value
+
+            $(`.survey_resp_item_value_${$(this).attr("data-id")}`).addClass("d-none")
+
+            if (e.target.value != "text") {
+                $(`.survey_resp_item_value_${$(this).attr("data-id")}-${e.target.value}`).removeClass("d-none")
+            }
+            if (e.target.value == "rate") {
+                $(`.survey_resp_item_value_${$(this).attr("data-id")}-rate`).rateit({ max: 5, step: 1, backingfld: `#survey_resp_item_value_${$(this).attr("data-id")}-rate-backing` })
+                $(`.survey_resp_item_value_${$(this).attr("data-id")}-rate`).bind('rated', function (event, value) { changeRate(event, value) })
+            }
+        })
+
+        $(document).on("change", ".survey_resp_item_value", function (e) {
+            const index = _resp_items.findIndex(item => item.id === parseInt($(this).attr("data-id")))
+            if ($(this).attr("data-value") == undefined) {
+                _resp_items[index].value = e.target.value
+            }
+        })
+
+        $(document).on("input", ".survey_resp_item_value", function (e) {
+            const index = _resp_items.findIndex(item => item.id === parseInt($(this).attr("data-id")))
+            if ($(this).attr("data-value") == undefined) {
+                _resp_items[index].value = e.target.value
+            } else {
+                let value = []
+                if (_resp_items[index].value != "") {
+                    value = JSON.parse(_resp_items[index].value)
+                }
+                value[parseInt($(this).attr("data-value"))] = e.target.value
+                _resp_items[index].value = JSON.stringify(value)
+            }
+        })
+
+        $(document).on("change", "#survey_resp_required", function () {
+            $(".survey_resp_item_value").prop("disabled", !$(this).prop("checked"))
+        })
+
+        // survey question types
+        $("#survey_ques_type_vtype").change(function (e) {
+            $(".survey_ques_type_field_value").addClass("d-none");
+            $(`#survey_ques_type_field_value_${e.target.value}`).removeClass("d-none");
+        })
+
+        let survey_ques_type_tb = await $('#survey_ques_type_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyQuestionType",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'code' },
+                { data: 'display_en' },
+                { data: 'display_es' },
+                { data: 'type' },
+                { data: 'field_value' },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning survey_ques_type_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  survey_ques_type_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".survey_ques_type_add_btn").click(async function () {
+            $("#survey_ques_type_modal_type").val("0")
+
+            $("#survey_ques_type_code").val("");
+            $("#survey_ques_type_display_en").val("");
+            $("#survey_ques_type_display_es").val("");
+            $(".survey_ques_type_field_value").val("");
+
+            $("#survey_ques_type_modal").modal('show');
+        });
+
+        $(".survey_ques_type_modal_confirm").click(async function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/${$("#survey_ques_type_modal_type").val() == "0" ? 'addSurveyQuestionType' : 'updateSurveyQuestionType'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    code: $("#survey_ques_type_code").val(),
+                    display_en: $("#survey_ques_type_display_en").val(),
+                    display_es: $("#survey_ques_type_display_es").val(),
+                    type: $("#survey_ques_type_vtype").val(),
+                    field_value: $(`#survey_ques_type_field_value_${$("#survey_ques_type_vtype").val()}`).val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#survey_ques_type_tb', $("#survey_ques_type_modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_ques_type_edit_btn", async function () {
+            $("#survey_ques_type_modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readOneSurveyQuestionType',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (res) {
+                    const data = res.data
+                    $("#survey_ques_type_code").val(data['code']);
+                    $("#survey_ques_type_display_en").val(data['display_en']);
+                    $("#survey_ques_type_display_es").val(data['display_es']);
+                    $("#survey_ques_type_vtype").val(data['type']);
+                    $(`#survey_ques_type_field_value_${data['type']}`).val(data['field_value']);
+
+                    $(".survey_ques_type_field_value").addClass("d-none");
+                    $(`#survey_ques_type_field_value_${data['type']}`).removeClass("d-none");
+
+                    $("#survey_ques_type_modal").modal('show');
+                }
+            });
+        });
+
+        $(document).on("click", ".survey_ques_type_delete_btn", async function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/deleteSurveyQuestionType',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                toastr.success("Deleted Successfully!")
+                                survey_ques_type_tb.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

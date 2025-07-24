@@ -1,0 +1,584 @@
+<style>
+    .fs-3 {
+        font-size: 1.5rem;
+    }
+
+    .fs-4 {
+        font-size: 1.2rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .r-16px {
+        border: 1px solid #00000000;
+        border-radius: 16px;
+    }
+
+    .r-12px {
+        border: 1px solid #00000000;
+        border-radius: 12px;
+    }
+
+    .survey_response {
+        transition: all .2s;
+    }
+
+    .survey_response:hover {
+        background-color: #D0D0D010;
+    }
+
+    .gap-5px {
+        column-gap: 5px;
+    }
+
+    .fw-wrap {
+        flex-wrap: wrap;
+    }
+
+    .field_ul {
+        list-style: none;
+        padding: 0;
+    }
+</style>
+
+<input type="hidden" class="response-element-rate-backing" />
+<div class="row my-10">
+    <div class="col-md-8">
+        <div class="form-group d-flex justify-content-start align-items-center mx-5">
+            <h6 class="m-0 mr-3">Language</h6>
+            <select id="survey_filter_language" class="form-control max-w-300px">
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex justify-content-end align-items-center">
+        <div class="d-flex justify-content-start align-items-center px-5 mx-1">
+            <input type="checkbox" style="width: 24px; height: 24px;" id="survey_view_completed" class="mx-1"
+                value="0" />
+            <label for="survey_view_completed" class="align-items-center m-0">
+                <h6 class="m-0">&nbsp;Completed</h6>
+            </label>
+        </div>
+        <button class="btn btn-lg btn-light-primary" id="survey_view_save"><i class="fa fa-save"></i>&nbsp;Save</button>
+    </div>
+    <div class="col-md-3">
+        <div class="min-h-600px bg-white r-16px p-5">
+            <h2 class="my-7 mx-5">Survey Name</h2>
+            <div class="accordion" id="survey_question_container">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="min-h-600px bg-white r-16px p-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 id="survey_view_title" class="my-7 mx-5">Survey View</h2>
+                <button class="btn btn-link text-danger fs-4" id="view_clear">Clear All</button>
+            </div>
+            <ul id="survey_combine_container" class="min-h-600px field_ul"></ul>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="min-h-600px bg-white r-16px p-5">
+            <h2 class="my-7 mx-5">Response</h2>
+            <ul id="survey_response_container" class="field_ul m-1" ondrop="dropResponse(event)"
+                ondragover="allowDrop(event)"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    let _current_ques = 0
+    let _survey_view = {
+        lang_id: 17,
+        completed: 0,
+        view: [],
+        survey_id: {{{ survey_id }}},
+    }
+    let _current_view = {}
+
+    // drag and drop begin //
+    function dragResponse(event) {
+        event.dataTransfer.setData("ele-id", event.target.id)
+    }
+
+    function allowDrop(event) {
+        if ($(event.target).attr("disable-drop") != "true") {
+            event.preventDefault()
+        }
+    }
+
+    // response begin //
+    function dropResponse(event) {
+        event.preventDefault()
+        var id = event.dataTransfer.getData("ele-id")
+        let element = document.getElementById(id)
+        if (!element.contains(event.target)) {
+            event.target.appendChild(element)
+        }
+    }
+    // response end //
+
+    // survey start //
+    function dropSurvey(event) {
+        event.preventDefault()
+
+        var id = event.dataTransfer.getData("ele-id") // element id
+        let element = document.getElementById(id)
+        // const _type = $(event.target).children().eq(0).attr("data-type")
+        const _type = $(element).children().eq(1).children().eq(0).attr("data-type")
+
+        let ques_id = $(event.target).attr("ques-id")
+        event.target.innerHTML = ""
+        const eles = element.querySelectorAll(".response-element-container")
+        eles.forEach(ele => {
+            event.target.appendChild(ele.cloneNode(true))
+        })
+        // get all elements
+        event.target.querySelectorAll(".response-element").forEach(ele => {
+            ele.removeAttribute("disabled")
+            ele.name = `survey_ques_eles_${_current_ques}-item`
+        })
+
+        if (_type == "text") {
+            event.target.querySelectorAll("textarea").forEach(ele => {
+                ele.classList.remove("cursor-pointer")
+            })
+            $(event.target).children(0).addClass("w-100")
+        } else if (_type == "rate") {
+            $(event.target).children(0).children(0).removeClass("response-element-rate")
+            $(event.target).children(0).children(0).addClass("response-view-rate")
+            $(event.target).parent().addClass("w-100")
+            $(event.target).children(0).children(0).html("")
+            $(".response-view-rate").rateit({ max: 5, step: 1, backingfld: ".response-element-rate-backing" })
+            $(".response-view-rate").bind('rated', function (event, value) { })
+        }
+
+        // save the response
+        if (!_current_view.ques) {
+            // get question
+            const obj = _survey_view.view.filter(o => o.ques.ques_id == ques_id)
+            _survey_view.view.map(item => {
+                if (item.ques.ques_id == obj[0].ques.ques_id) {
+                    item.resp = {
+                        resp_id: parseInt($(element).attr("data-id")),
+                        items: $(element).children().eq(1).attr("ele-data"),
+                        required: $(element).children().eq(1).attr("ele-required")
+                    }
+                }
+            })
+        } else { // update
+            _current_view.resp = {
+                resp_id: parseInt($(element).attr("data-id")),
+                items: $(element).children().eq(1).attr("ele-data"),
+                required: $(element).children().eq(1).attr("ele-required")
+            }
+            _survey_view.view.push(_current_view)
+        }
+        // clear
+        _current_ques = 0
+        _current_view = {}
+    }
+    // survey end //
+    // drag and drop end //
+
+    function loadCateQues(lang_id) {
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/survey_cateques',
+            method: 'POST',
+            data: {
+                lang_id: lang_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                const result = res.data
+                let html = ""
+                result.forEach(item => {
+                    let sub_html = ""
+                    if (item.ques.length == 0) {
+                        sub_html += `<p class="fs-3 text-center mt-3">No Question</p>`
+                    } else {
+                        item.ques.forEach(ques => {
+                            sub_html += `<button class="btn btn-link add_ques_btn mb-2 fs-4" data-id="${ques.id}"" date-survey="${item.cate.name}" data-ques="${ques.text}">${ques.text}</button>`
+                        })
+                    }
+                    html += `<div class="card">
+                                <div class="card-header" id="heading-${item.cate.id}">
+                                    <h3 class="card-title collapsed" data-toggle="collapse" data-target="#collapse-${item.cate.id}"
+                                        aria-expanded="false" aria-controls="collapse-${item.cate.id}">
+                                        <i class="icon">#</i> ${item.cate.name}
+                                    </h3>
+                                </div>
+                                <div id="collapse-${item.cate.id}" class="collapse" aria-labelledby="heading-${item.cate.id}" data-parent="#survey_question_container">
+                                    <div class="card-body px-0">${sub_html}</div>
+                                </div>
+                            </div>`
+                })
+                $("#survey_question_container").html(html)
+            }
+        })
+    }
+
+    function loadResponse(lang_id) {
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey/readSurveyResponse',
+            method: 'POST',
+            data: {
+                lang_id: lang_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                const result = res.data
+                let html = ""
+                result.forEach(res => {
+                    let sub_html = ""
+                    const items = JSON.parse(res.items)
+                    items.forEach(item => {
+                        if (item.type == "numeric" || item.type == "boolean") {
+                            sub_html += `<div class="form-check form-check-radio m-2 mb-3 response-element-container" disable-drop="true" data-type="${item.type}">
+                                            <label class="form-check-label fs-4 cursor-pointer" disable-drop="true">
+                                                <input class="form-check-input cursor-pointer response-element" type="radio" disabled="" disable-drop="true" /> ${item.name}
+                                            </label>
+                                        </div>`
+                        } else if (item.type == "text") {
+                            sub_html += `<div class="form-group my-3 mx-5 response-element-container w-100" disable-drop="true" data-type="${item.type}">
+                                            <textarea class="form-control cursor-pointer response-element" rows="4" type="text" disable-drop="true" placeholder="Please don't enter any personal information."></textarea>
+                                        </div>`
+                        } else if (item.type == "rate") {
+                            sub_html += `<div class="response-element-container" disable-drop="true" data-type="${item.type}">
+                                            <div data-id="${res.id}" class="rateit response-element response-element-rate" data-rateit-mode="font" data-rateit-resetable="false" style="font-size: xx-large"></div>
+                                         </div>`
+                        } else if (item.type == "num_rate") {
+                            rate_html = ""
+                            for (var i = 0; i <= 10; i++) {
+                                let label = ""
+                                if (i == 0 || i == 10) {
+                                    let value = JSON.parse(item.value)
+                                    if (i == 0) {
+                                        label = value[0]
+                                    } else {
+                                        label = value[1]
+                                    }
+                                }
+                                if (i == 0) {
+                                    rate_html += `<div class="fs-4 ml-2 mt-2 mb-3 cursor-pointer response-element-container" disable-drop="true">${label}</div>`
+                                }
+                                rate_html += `<div class="form-check form-check-radio m-2 mb-3 response-element-container" disable-drop="true" data-type="${item.type}">
+                                                  <label class="form-check-label fs-4 cursor-pointer" disable-drop="true">
+                                                      <input class="form-check-input cursor-pointer response-element" type="radio" disabled="" disable-drop="true" />&nbsp;${i}
+                                                  </label>
+                                              </div>`
+                                if (i == 10) {
+                                    rate_html += `<div class="fs-4 mr-2 mt-2 mb-3 cursor-pointer response-element-container" disable-drop="true">${label}</div>`
+                                }
+                            }
+                            sub_html += rate_html
+                        }
+                    })
+                    html += `<li class="my-5 cursor-pointer" ondragstart="dragResponse(event)" draggable="true" id="response-item-${res.id}" data-id=${res.id}>
+                                <span class="mx-5" disable-drop="true">${res.key}</span>
+                                <div class="r-12px d-flex fw-wrap justify-content-start border survey_response p-2" ele-required="${res.required}" ele-data='${res.items}' data-id=${res.id} disable-drop="true">${sub_html}</div>
+                            </li>`
+                })
+                $("#survey_response_container").html(html)
+
+                // for rate range
+                result.forEach(res => {
+                    const items = JSON.parse(res.items)
+                    items.forEach(item => {
+                        if (item.type == "rate") {
+                            $(".response-element-rate-backing").val("0")
+                            $(".response-element-rate").rateit({ max: 5, step: 1, backingfld: ".response-element-rate-backing" })
+                            $(".response-element-rate").bind('rated', function (event, value) { })
+                        }
+                    })
+                })
+            }
+        })
+    }
+
+    function loadSurveyView(lang_id) {
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/readSurveyView',
+            method: 'POST',
+            data: {
+                lang_id: lang_id,
+                survey_id: _survey_view.survey_id
+            },
+            dataType: 'json',
+            success: function (res) {
+                if (!res.data.length) {
+                    $("#survey_view_title").html(`Survey View`)
+                } else {
+                    $("#survey_view_title").html(`Survey View (<span class="text-danger">${res.data[0].survey.survey}</span>)`)
+                }
+
+                let html = ""
+                let _responses = []
+                const result = res.data
+                result.forEach(data => {
+                    _survey_view = {
+                        lang_id: data.lang_id,
+                        completed: data.completed,
+                        survey_id: data.survey_id,
+                        view: JSON.parse(data.view)
+                    }
+
+                    $("#survey_view_completed").prop("checked", data.completed == 1 ? true : false)
+
+                    const views = JSON.parse(data.view)
+                    views.forEach(view => {
+                        // responses
+                        let resp_html = ""
+                        const responses = view.resp
+                        const items = JSON.parse(responses.items)
+                        items.forEach(item => {
+                            if (item.type == "boolean" || item.type == "numeric") {
+                                resp_html += `<div class="form-check form-check-radio m-2 mb-2" disable-drop="true">
+                                                <label class="form-check-label fs-4 cursor-pointer" disable-drop="true">
+                                                    <input class="form-check-input cursor-pointer" type="radio" name="survey_ques_eles_${view.ques.ques_id}-item" disable-drop="true" /> ${item.name}
+                                                </label>
+                                            </div>`
+                            } else if (item.type == "text") {
+                                resp_html += `<div class="form-group my-3 mx-5 response-element-container w-100" disable-drop="true" data-type="${item.type}">
+                                                <textarea class="form-control response-element" rows="4" type="text" disable-drop="true" placeholder="Please don't enter any personal information."></textarea>
+                                            </div>`
+                            } else if (item.type == "rate") {
+                                resp_html += `<div class="response-element-container" disable-drop="true" data-type="${item.type}">
+                                                <div class="rateit response-element response-view-rate" data-rateit-mode="font" data-rateit-resetable="false" style="font-size: xx-large"></div>
+                                             </div>`
+                            } else if (item.type == "num_rate") {
+                                rate_html = ""
+                                for (var i = 0; i <= 10; i++) {
+                                    let label = ""
+                                    if (i == 0 || i == 10) {
+                                        let value = JSON.parse(item.value)
+                                        if (i == 0) {
+                                            label = value[0]
+                                        } else {
+                                            label = value[1]
+                                        }
+                                    }
+                                    if (i == 0) {
+                                        rate_html += `<div class="fs-4 ml-2 mt-2 mb-3 cursor-pointer" disable-drop="true">${label}</div>`
+                                    }
+                                    rate_html += `<div class="form-check form-check-radio m-2 mb-3" disable-drop="true" data-type="${item.type}">
+                                                      <label class="form-check-label fs-4 cursor-pointer" disable-drop="true">
+                                                          <input class="form-check-input cursor-pointer response-element" type="radio" disable-drop="true" name="survey_ques_eles_${view.ques.ques_id}-item-rate" />&nbsp;${i}
+                                                      </label>
+                                                  </div>`
+                                    if (i == 10) {
+                                        rate_html += `<div class="fs-4 mr-2 mt-2 mb-3 cursor-pointer" disable-drop="true">${label}</div>`
+                                    }
+                                }
+                                resp_html += rate_html
+                            }
+                        })
+                        resp_html = `<div ques-id="${view.ques.ques_id}" class="d-flex fw-wrap justify-content-start align-items-center survey_ques_eles_${view.ques.ques_id} gap-5px min-h-30px" ondrop="dropSurvey(event)" ondragover="allowDrop(event)">${resp_html}</div>`
+
+                        // question and trach icon
+                        html += `<li class="w-100 mb-4 p-4 r-12px border d-flex justify-content-between alitn-items-center survey_question_${view.ques.ques_id}">
+                                    <div class="w-100 pl-2 pr-4">
+                                        <p class="fs-4 w-100">${view.ques.question} (<span class="text-danger">${view.ques.survey_name}</span>)</p>
+                                        ${resp_html}
+                                    </div>
+                                    <i class="fa fa-trash text-gray text-hover-danger cursor-pointer delete_survey max-h-20px fs-3" data-id="${view.ques.ques_id}"></i>
+                                </li>`
+                    })
+                })
+                $("#survey_combine_container").html(html)
+
+                // for rate range
+                $(".response-element-rate-backing").val("0")
+                $(".response-view-rate").rateit({ max: 5, step: 1, backingfld: ".response-element-rate-backing" })
+                $(".response-view-rate").bind('rated', function (event, value) { })
+            }
+        })
+    }
+
+    $(document).ready(async () => {
+        // language
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/language/read',
+            method: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (res) {
+                const data = res.data
+                let html = ""
+                data.forEach(lang => {
+                    if (lang.code == "en") {
+                        html += `<option value="${lang.id}" selected>${lang.english}</option>`
+                    } else {
+                        html += `<option value="${lang.id}">${lang.english}</option>`
+                    }
+                })
+                $("#survey_filter_language").html(html);
+            }
+        });
+
+        //cate ques
+        loadCateQues(17)
+
+        // response
+        loadResponse(17)
+
+        // survey
+        loadSurveyView(17)
+
+        $("#survey_filter_language").change(function (e) {
+            loadCateQues(e.target.value)
+            loadResponse(e.target.value)
+            loadSurveyView(e.target.value)
+
+            _survey_view = {
+                lang_id: parseInt(e.target.value),
+                view: [],
+                survey_id: _survey_view.survey_id
+            }
+            _current_view = {}
+        })
+
+        $(document).on("click", ".add_ques_btn", function () {
+            if (_current_ques > 0) {
+                toastr.info("You have to add a response because a question is added!")
+                return
+            }
+            _current_ques = parseInt($(this).attr("data-id"))
+
+            if (_survey_view.view.filter(o => o.ques.ques_id == _current_ques).length) {
+                toastr.warning("This question is already added!")
+                _current_ques = 0
+                return
+            }
+
+            let html = ""
+            html = `<li class="w-100 mb-4 p-4 r-12px border d-flex justify-content-between alitn-items-center survey_question_${$(this).attr("data-id")}">
+                        <div class="pl-2 pr-4 w-100">
+                            <p class="fs-4 m-0">${$(this).attr("data-ques")} (<span class="text-danger">${$(this).attr("date-survey")}</span>)</p>
+                            <div ques-id="${_current_ques}" class="d-flex fw-wrap justify-content-start align-items-center survey_ques_eles_${_current_ques} gap-5px min-h-30px my-3" ondrop="dropSurvey(event)" ondragover="allowDrop(event)"></div>
+                        </div>
+                        <i class="fa fa-trash text-gray text-hover-danger cursor-pointer delete_survey max-h-20px my-1 fs-3" data-id=${$(this).attr("data-id")}></i>
+                    </li>`
+            $("#survey_combine_container").append(html)
+
+            //
+            _current_view = {
+                ques: {
+                    ques_id: _current_ques,
+                    question: $(this).attr("data-ques"),
+                    survey_name: $(this).attr("date-survey")
+                },
+                resp: {},
+                answer: 0
+            }
+        })
+
+        $(document).on("click", ".survey_response", function () {
+            if (_current_ques == 0) {
+                toastr.warning("Please add a question!")
+                return
+            }
+            let html = ""
+            let items = JSON.parse($(this).attr("ele-data"))
+            items.forEach(item => {
+                if (item.type == "boolean" || item.type == "numeric") {
+                    html += `<div class="form-check form-check-radio m-2 mb-2" disable-drop="true">
+                                <label class="form-check-label fs-4 cursor-pointer" disable-drop="true">
+                                    <input class="form-check-input cursor-pointer" type="radio" name="survey_ques_eles_${_current_ques}-item" disable-drop="true" /> ${item.name}
+                                </label>
+                            </div>`
+                } else if (item.type == "text") {
+                    html += `<div class="form-group my-3 mx-5 response-element-container w-100" disable-drop="true" data-type="${item.type}">
+                                <textarea class="form-control response-element" rows="4" type="text" disable-drop="true" placeholder="Please don't enter any personal information."></textarea>
+                            </div>`
+                } else if (item.type == "rate") {
+                    html += `<div class="response-element-container" disable-drop="true" data-type="${item.type}">
+                                 <div class="rateit response-element response-view-rate" data-rateit-mode="font" data-rateit-resetable="false" style="font-size: xx-large"></div>
+                             </div>`
+                } else if (item.type == "num_rate") {
+                    sub_html = ""
+                    for (var i = 0; i <= 10; i++) {
+                        let label = ""
+                        if (i == 0 || i == 10) {
+                            let value = JSON.parse(item.value)
+                            if (i == 0) {
+                                label = value[0]
+                            } else {
+                                label = value[1]
+                            }
+                        }
+                        if (i == 0) {
+                            sub_html += `<div class="fs-4 ml-2 mt-2 mb-3 cursor-pointer response-element-container" disable-drop="true">${label}</div>`
+                        }
+                        sub_html += `<div class="form-check form-check-radio m-2 mb-3" disable-drop="true" data-type="${item.type}">
+                                          <label class="form-check-label fs-4 cursor-pointer" disable-drop="true">
+                                              <input class="form-check-input cursor-pointer response-element" type="radio" disabled="" disable-drop="true" />&nbsp;${i}
+                                          </label>
+                                      </div>`
+                        if (i == 10) {
+                            sub_html += `<div class="fs-4 mr-2 mt-2 mb-3 cursor-pointer response-element-container" disable-drop="true">${label}</div>`
+                        }
+                    }
+                    html += sub_html
+                }
+            })
+            $(`.survey_ques_eles_${_current_ques}`).html(html)
+            _current_ques = 0
+
+            // for rate range
+            $(".response-element-rate-backing").val("0")
+            $(".response-view-rate").rateit({ max: 5, step: 1, backingfld: ".response-element-rate-backing" })
+            $(".response-view-rate").bind('rated', function (event, value) { })
+
+            //
+            _current_view.resp = {
+                resp_id: parseInt($(this).attr("data-id")),
+                items: $(this).attr("ele-data"),
+                required: $(this).attr("ele-required")
+            }
+            _survey_view.view.push(_current_view)
+            _current_view = {}
+        })
+
+        $(document).on("click", ".delete_survey", function () {
+            const _id = parseInt($(this).attr("data-id"))
+            _survey_view.view = _survey_view.view.filter(o => o.ques.ques_id != _id)
+
+            // remove item
+            $(`.survey_question_${_id}`).remove()
+            _current_view = {}
+            _current_ques = 0
+        })
+
+        $("#survey_view_save").click(function () {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/survey/saveSurveyView',
+                method: 'POST',
+                data: _survey_view,
+                dataType: 'text',
+                success: function (res) {
+                    if (res == "ok") {
+                        toastr.success("Saved Successfully!")
+                    } else {
+                        toastr.error("Failed in Save")
+                    }
+                },
+                error: function (error) {
+                    toastr.error(error ? error : "Error has been occurred!")
+                }
+            })
+        })
+
+        $("#view_clear").click(function () {
+            _current_ques = 0
+            _survey_view.view = []
+            _current_view = {}
+            $("#survey_combine_container").html("")
+        })
+
+        $("#survey_view_completed").click(function () {
+            $(this).prop("checked") == true ? _survey_view.completed = 1 : _survey_view.completed = 0
+        })
+    })
+</script>

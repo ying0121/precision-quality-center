@@ -1,0 +1,189 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div>
+            <h3>Education Categories</h3>
+        </div>
+        <div style="padding:10px 20px 10px 20px;" class="edu_cate_add_btn btn btn-light-primary btn-icon"><i
+                class='fa fa-plus'></i></div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="edu_cate_tb">
+                <thead>
+                    <th>Parent Menu</th>
+                    <th>English</th>
+                    <th>Español</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edu_cate_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <input type="hidden" id="modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Education Categories</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Parent Menu</h6>
+                            <input id="edu_cate_parent_menu" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>English</h6>
+                            <input id="edu_cate_text_en" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Español</h6>
+                            <input id="edu_cate_text_es" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="edu_cate_status" class="form-control">
+                                <option value="0">Inactive</option>
+                                <option value="1">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary edu_cate_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(() => {
+        let edu_cate_tb = $('#edu_cate_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/edu_cate/readEducationCategories",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'parent_menu' },
+                { data: 'text_en' },
+                { data: 'text_es' },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return row.status == 1 ? `<span class="bg-light-primary text-primary rounded p-3">Active</span>` : `<span class="bg-light-danger text-danger rounded p-3">Inactive</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning edu_cate_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  edu_cate_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".edu_cate_add_btn").click(function () {
+            $("#modal_type").val("0")
+
+            $("#edu_cate_parent_menu").val("");
+            $("#edu_cate_text_en").val("");
+            $("#edu_cate_text_es").val("");
+            $("#edu_cate_status").val("1");
+
+            $("#edu_cate_modal").modal('show');
+        });
+
+        $(".edu_cate_modal_confirm").click(function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/edu_cate/${$("#modal_type").val() == "0" ? 'createEducationCategory' : 'updateEducationCategory'}`,
+                method: "POST",
+                data: {
+                    id: window.id,
+                    parent_menu: $("#edu_cate_parent_menu").val(),
+                    text_en: $("#edu_cate_text_en").val(),
+                    text_es: $("#edu_cate_text_es").val(),
+                    status: $("#edu_cate_status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#edu_cate_tb', $("#modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".edu_cate_edit_btn", function () {
+            $("#modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/edu_cate/readOneEducationCategory',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    $("#edu_cate_parent_menu").val(data['parent_menu']);
+                    $("#edu_cate_text_en").val(data['text_en']);
+                    $("#edu_cate_text_es").val(data['text_es']);
+                    $("#edu_cate_status").val(data['status']);
+
+                    $("#edu_cate_modal").modal('show');
+                }
+            });
+        });
+
+        $(document).on("click", ".edu_cate_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/edu_cate/deleteEducationCategory',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok")
+                                tmp.remove();
+                        }
+                    });
+                }
+            });
+        });
+
+    });
+</script>

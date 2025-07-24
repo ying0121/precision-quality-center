@@ -1,0 +1,173 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div>
+            <h3>Security Questions</h3>
+        </div>
+        <div style="padding:10px 20px 10px 20px;" class="sques_add_btn btn btn-light-primary btn-icon"><i
+                class='fa fa-plus'></i></div>
+        <input type="hidden" id="chosen_id" />
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="sques_tb">
+                <thead>
+                    <th>Question</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sques_modal">
+    <div class="modal-dialog">
+        <input type="hidden" id="sques_modal_type" />
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Question</h6>
+                            <input id="sques_question" class="form-control" type="text" value="" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select id="sques_status" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary savebtn" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(() => {
+        let sque_table = $('#sques_tb').DataTable({
+            "pagingType": "full_numbers",
+            "order": [[2, 'desc']],
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + "/setting/squestion/read",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'question' },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class = '${row.status == 1 ? "text-success" : "text-danger"}'>${row.status == 1 ? "Active" : "Inactive"}</span>`
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="`+ row.id + `">
+                            <span class='btn btn-icon mx-1 btn-sm btn-light-success editbtn'><i class='fa fa-eye'></i></span>
+                            <span class='btn btn-icon mx-1 btn-sm btn-light-danger  deletebtn'><i class='fa fa-trash'></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".sques_add_btn").click(function () {
+            $("#sques_modal_type").val("0");
+
+            $("#sques_question").val("");
+
+            $("#sques_modal").modal("show")
+        })
+
+        $(document).on("click", ".editbtn", function () {
+            $("#sques_modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/setting/squestion/readOne',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    $("#sques_question").val(data.data['question']);
+                    $("#sques_status").val(data.data['status']);
+
+                    $("#sques_modal").modal('show');
+                }
+            });
+        });
+
+        $(document).on("click", ".deletebtn", function () {
+            window.id = $(this).parent().attr("idkey");
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/setting/squestion/delete',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                toastr.success("Deleted Successfully")
+                                sque_table.ajax.reload()
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".savebtn").click(function () {
+            let entry = {
+                id: window.id,
+                question: $("#sques_question").val(),
+                status: $("#sques_status").val()
+            }
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/squestion/${$("#sques_modal_type").val() == "0" ? "add" : "update"}`,
+                type: 'post',
+                data: entry,
+                dataType: "text",
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                        sque_table.ajax.reload()
+                    }
+                }
+            });
+        });
+    });
+
+</script>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{!-- <meta name="csrf-token" content="{{csrfToken}}"> --}}
+    <title>Roswell's Medical Center</title>
+    {{>header_include}}
+    <style>
+        .nav-link{
+            color:white !important;
+        }
+    </style>
+</head>
+	
+<body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
+    {{> mobile_topbar}}
+    <div class="d-flex flex-column flex-root">
+        <div class="d-flex flex-row flex-column-fluid page">
+            {{> sidebar}}
+            <div class="d-flex flex-column flex-row-fluid wrapper pt-20" id="kt_wrapper">
+                {{> topbar}}
+                <div class="content d-flex flex-column flex-column-fluid p-10">
+                    {{{ body }}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

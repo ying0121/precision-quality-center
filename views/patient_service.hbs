@@ -1,0 +1,352 @@
+<h1 class="mx-auto">{{category_name}}</h1>
+
+<div class = "row my-3 p-10 bg-white border rounded">
+    <div class = "col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div><h3>Patient Services</h3></div>
+        <div style = "padding:10px 20px 10px 20px;" class = "service_add_btn btn btn-light-primary btn-icon" ><i class = 'fa fa-plus'></i></div>
+    </div>
+    <div class = "col-12">
+        <div class="table-responsive">
+            <table class="table" id="service_tb">
+                <thead>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Display</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="service_add_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Add Service to {{category_name}}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+        
+                <div class = "row">
+                    <div class = "col-md-6">
+                        <div class="form-group">
+                            <h6>Name(EN)</h6>
+                            <input id = 'add_en_name' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class = "col-md-6">
+                        <div class="form-group">
+                            <h6>Name(ES)</h6>
+                            <input id = 'add_es_name' class="form-control" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary service_add_confirm" data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="service_edit_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Edit Service</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class = "row">
+                    <div class = "col-md-12">
+                        <div class="form-group">
+                            <h6>Category</h6>
+                            <select id = 'edit_category' class="form-control" type="text">
+                                {{#each categories}}<option value = '{{getProperty this 'id'}}'>{{getProperty this 'en_name'}}</option>{{/each}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class = "col-md-12">
+                        <div class="form-group">
+                            <h6>Name(EN)</h6>
+                            <input id = 'edit_en_name' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class = "col-md-12">
+                        <div class="form-group">
+                            <h6>Name(ES)</h6>
+                            <input id = 'edit_es_name' class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Description(EN)</h6>
+                            <div id="edit_en_desc"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Description(ES)</h6>
+                            <div id="edit_es_desc"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Detail(EN)</h6>
+                            <div id="edit_en_detail"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Detail(ES)</h6>
+                            <div id="edit_es_detail"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Contact</h6>
+                            <div id="edit_contact"></div>
+                        </div>
+                    </div>
+
+                    <div class = "col-md-12">
+                        <div class="form-group">
+                            <h6>Status</h6>
+                            <select class="form-control" id="edit_status" style="height:36px;">
+                                <option value="1">Visible</option>
+                                <option value="0">Invisible</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Modal footer -->
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary service_edit_confirm" data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="image_upload_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Upload Image</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class = "row">
+                    <div class = 'col-md-12'>
+                        <div class="custom-file form-group">
+                            {{!-- <input type="file" id="fileInput" class="btn btn-primary">
+            <button type="button" onclick="uploadFile()" class="btn btn-primary" style="border-radius: 4px;">Upload</button> --}}
+                            <input type="file" class="custom-file-input" id="fileInput" name="upload_image" >
+                            <label class="custom-file-label" for="upload_image">Choose file</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary" data-dismiss="modal" onclick = "uploadFile();">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function uploadFile() {
+        var formData = new FormData();
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var id = window.id;
+        formData.append('file', file);
+        formData.append('id', id);
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/patient_service/uploadServiceImage',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                handleTableResponse(data, '#service_tb', 'Upload');
+            }
+        });
+    }
+    $(document).ready( () => {
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+        $('#edit_en_desc').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_es_desc').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_en_detail').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_es_detail').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        $('#edit_contact').summernote({
+            tabsize: 1,
+            height: 150
+        });
+
+        let service_tb = $('#service_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + "/patient_service/readServices",
+                "type": "POST",
+                "data": function(data) {
+                    data.category_id = {{category_id}}
+                }
+            },
+            "columns": [
+                { data: 'image',
+                    render: function (data, type, row) {
+                        return `<img src= "{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/patient_service/` +row.image + `" width="100" />`;
+                    }
+                },
+                { data: 'en_name' },
+                { data: 'en_desc' },
+                { data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class = '${row.status==1?"text-success":"text-danger"}'>${row.status==1?"Visible":"Invisible"}</span>`
+                    } 
+                },
+                { data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="`+row.id+`">
+                            <span class="btn btn-icon btn-sm btn-light-primary image_upload_btn"><i class="fa fa-file"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-warning service_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  service_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    } 
+                }
+            ]
+        });
+
+        $(".service_add_btn").click(function(){
+            $("#service_add_modal").modal('show');
+        });
+        $(".service_add_confirm").click(function(){
+            $.ajax ({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/patient_service/createService',
+                method: "POST",
+                data: {category_id: {{category_id}}, en_name:$("#add_en_name").val(),es_name:$("#add_es_name").val()},
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#service_tb', 'Add');
+                }
+            });
+        });
+        $(document).on("click",".service_edit_btn",function(){
+            window.id = $(this).parent().attr("idkey");
+            $.ajax ({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/patient_service/readOneService',
+                method: "POST",
+                data: {id: window.id},
+                dataType: "json",
+                success: function (data) {
+                    $("#edit_category").val(data['category_id']);
+                    $("#edit_en_name").val(data['en_name']);
+                    $("#edit_es_name").val(data['es_name']);
+                    $("#edit_en_desc").summernote("code",data['en_desc']);
+                    $("#edit_es_desc").summernote("code",data['es_desc']);
+                    $("#edit_en_detail").summernote("code",data['en_detail']);
+                    $("#edit_es_detail").summernote("code",data['es_detail']);
+                    $("#edit_contact").summernote("code",data['contact']);
+                    $("#edit_status").val(data['status']);
+                    $("#service_edit_modal").modal('show');
+                }
+            });
+        });
+        $(".service_edit_confirm").click(function(){
+            $.ajax ({
+                url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/patient_service/updateService',
+                method: "POST",
+                data: {
+                    id: window.id, 
+                    category_id: $("#edit_category").val(),
+                    en_name:$("#edit_en_name").val(),
+                    es_name:$("#edit_es_name").val(),
+                    en_desc:$("#edit_en_desc").summernote("code"),
+                    es_desc:$("#edit_es_desc").summernote("code"),
+                    en_detail:$("#edit_en_detail").summernote("code"),
+                    es_detail:$("#edit_es_detail").summernote("code"),
+                    contact:$("#edit_contact").summernote("code"),
+                    status:$("#edit_status").val()
+                },
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#service_tb', 'Update');
+                }
+            });
+        });
+        $(document).on("click",".service_delete_btn",function(){
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax ({
+                        url: '{{env.HOST_URL}}' + '{{env.PREFIX_URL}}' + '/patient_service/deleteService',
+                        method: "POST",
+                        data: {id: window.id},
+                        dataType: "text",
+                        success: function (data) {
+                            if(data = "ok")
+                                tmp.remove();
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on('click', '.image_upload_btn', function(){
+            var id = $(this).closest('div').attr('idkey');
+            window.id = id;
+            $("#image_upload_modal").modal('show');
+        });
+    });
+</script>

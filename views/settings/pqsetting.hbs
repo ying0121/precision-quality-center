@@ -1,0 +1,604 @@
+<div class="row">
+    <div class="col-md-12 bg-primary p-2 mb-2 text-white">
+        <div class="d-flex justify-content-around">
+            <div class="d-flex align-items-center" style="font-size:20px; font-weight:bold;">Precision Quality Settings
+            </div>
+            <ul class="nav nav-tabs nav-pills" data-tabs="tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#words" data-toggle="tab">
+                        Words
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#backgrounds" data-toggle="tab">
+                        Backgrounds
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#footer" data-toggle="tab">
+                        Footer
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="tab-content">
+            <div class="tab-pane active" id="words">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <h3 class="m-0">Background Words</h3>
+                            <div class="d-flex justify-content-start align-items-center px-5 mx-1">
+                                <input type="checkbox" style="width: 24px; height: 24px;" id="bg-text" class="mx-1" />
+                                <label for="bg-text" class="align-items-center m-0">
+                                    <h6 class="m-0">&nbsp;Show this words on the background</h6>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-start">
+                            <div style="padding:10px 20px 10px 20px;"
+                                class="pqsetting_color_btn btn btn-light-primary btn-icon mx-2"><i
+                                    class='fa fa-palette'></i>
+                            </div>
+                            <div style="padding:10px 20px 10px 20px;"
+                                class="pqsetting_add_btn btn btn-light-success btn-icon"><i class='fa fa-plus'></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="pqsetting_tb">
+                                <thead>
+                                    <th>Code</th>
+                                    <th>Display</th>
+                                    <th>Description</th>
+                                    <th>Color</th>
+                                    <th>Created Date</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="backgrounds">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-12 mb-4 d-flex justify-content-start align-items-center my-5">
+                        <div>
+                            <h3>Backgrounds</h3>
+                        </div>
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div class="d-flex justify-content-start align-items-center px-5 mx-1">
+                                <input type="radio" style="width: 24px; height: 24px;" name="bg-radio"
+                                    id="bg-radio-image" class="mx-1" value="image" checked />
+                                <label for="bg-radio-image" class="align-items-center m-0">
+                                    <h6 class="m-0">&nbsp;Image</h6>
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-start align-items-center px-5 mx-1">
+                                <input type="radio" style="width: 24px; height: 24px;" name="bg-radio"
+                                    id="bg-radio-video" class="mx-1" value="video" />
+                                <label for="bg-radio-video" class="align-items-center m-0">
+                                    <h6 class="m-0">&nbsp;Video</h6>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-5">
+                        <hr>
+                    </div>
+                    <div class="col-12 row justify-content-center align-items-center">
+                        <div class="col-12 mb-2">
+                            <h4 class="mx-4">Image</h4>
+                        </div>
+                        <div class="col-4 mb-5">
+                            <div class="custom-file custiom-group mb-10">
+                                <input id="bg_image" class="custom-file-input" type="file" accept="image/*" />
+                                <label class="custom-file-label" for="bg_image">Select an image</label>
+                            </div>
+                            <div class="d-flex justify-content-center mb-20">
+                                <button type="button" class="btn btn-light-primary bg_image_save">Update</button>
+                            </div>
+                            <div class="w-100 d-flex justify-content-center align-items-center"
+                                id="progressWrapper-image">
+                                <progress class="w-100 mr-3" id="progressBar-image" value="0" max="100"></progress>
+                                <span id="progressPercentage-image">0%</span>
+                            </div>
+                        </div>
+                        <div class="col-8 mb-5">
+                            <img class="w-100" id="bg-preview-image" src="" alt="Background Image" />
+                        </div>
+                        <div class="col-12 mb-5">
+                            <hr>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <h4 class="mx-4">Video</h4>
+                        </div>
+                        <div class="col-4 mb-5">
+                            <div class="custom-file custiom-group mb-10">
+                                <input id="bg_video" class="custom-file-input" type="file" accept="video/*" />
+                                <label class="custom-file-label" for="bg_video">Select a Video</label>
+                            </div>
+                            <div class="d-flex justify-content-center mb-20">
+                                <button type="button" class="btn btn-light-primary bg_video_save">Update</button>
+                            </div>
+                            <div class="w-100 d-flex justify-content-center align-items-center"
+                                id="progressWrapper-video">
+                                <progress class="w-100 mr-3" id="progressBar-video" value="0" max="100"></progress>
+                                <span id="progressPercentage-video">0%</span>
+                            </div>
+                        </div>
+                        <div class="col-8 mb-5">
+                            <video class="w-100" id="bg-preview-video" autoplay loop muted>
+                                <source src="mov_bbb.mp4" type="video/mp4">
+                                <source src="mov_bbb.mpg" type="video/mpg">
+                                <source src="mov_bbb.wmv" type="video/wmv">
+                                <source src="mov_bbb.mpeg" type="video/mpeg">
+                                <source src="mov_bbb.ogg" type="video/ogg">
+                                <source src="mov_bbb.avi" type="video/avi">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="footer">
+                <div class="row my-3 p-10 bg-white border rounded">
+                    <div class="col-md-12 mb-10">
+                        <h3 class="m-0">Background Footer</h3>
+                    </div>
+                    <div class="col-md-12 mb-5">
+                        <div class="form-group">
+                            <h6>Footer</h6>
+                            <textarea id="bg_footer" class="form-control" rows="5" type="text"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" class="btn btn-light-primary bg_footer_save">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pqsetting_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Dashboard Words</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Code</h6>
+                            <input id="pqsetting_code" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Color</h6>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input id="pqsetting_color" class="form-control p-1" type="color" />
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="m-0" style="font-size: x-large;" id="pqsetting_color_name"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Display</h6>
+                            <input id="pqsetting_display" class="form-control" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Description</h6>
+                            <textarea id="pqsetting_description" class="form-control" rows="5" type="text"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary pqsetting_modal_confirm"
+                    data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pqsetting_color_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="modal_type" />
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title ">Set All Texts Color</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Color</h6>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input id="pqsetting_all_color" class="form-control p-1" type="color"
+                                        value="#ffffff" />
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="m-0" style="font-size: x-large;"
+                                        id="pqsetting_all_color_name">#ffffff</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary pqsetting_color_modal_confirm">Done</button>
+                <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/settings/readByCodes',
+            method: "POST",
+            data: {
+                code: [
+                    "bg_image",
+                    "bg_video",
+                    "bg_status",
+                    "bg_text",
+                    "bg_footer",
+                ]
+            },
+            dataType: "json",
+            success: function (res) {
+                // bg_image
+                $("#bg-preview-image").attr("src", `{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${res.data['bg_image'].display}`)
+
+                // bg_video
+                const video = document.getElementById("bg-preview-video")
+                video.src = `{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${res.data['bg_video'].display}`
+                video.load();
+                video.play();
+
+                // bg_status
+                $(`#bg-radio-${res.data['bg_status'].display}`).prop("checked", true)
+
+                // bg_text
+                $("#bg-text").prop("checked", res.data['bg_text'].display == "true" ? true : false)
+
+                // bg_footer
+                $("#bg_footer").val(res.data['bg_footer'].detail)
+            }
+        });
+
+        // words
+        let pqsetting_tb = $('#pqsetting_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pqsetting/readpqsettings",
+                "type": "POST"
+            },
+            "columns": [
+                { data: 'code' },
+                { data: 'display' },
+                { data: 'description' },
+                { data: 'color' },
+                {
+                    data: 'createdAt',
+                    render: function (data, type, row) {
+                        return new Date(row.createdAt).toLocaleDateString()
+                    }
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                        <div idkey="${row.id}">
+                            <span class="btn btn-icon btn-sm btn-light-warning pqsetting_edit_btn"><i class="fas fa-edit"></i></span>
+                            <span class="btn btn-icon btn-sm btn-light-danger  pqsetting_delete_btn"><i class="fas fa-trash"></i></span>
+                        </div>
+                        `
+                    }
+                }
+            ]
+        });
+
+        $(".pqsetting_add_btn").click(function () {
+            $("#modal_type").val("0")
+
+            $("#pqsetting_code").val("");
+            $("#pqsetting_display").val("");
+            $("#pqsetting_description").val("");
+
+            $("#pqsetting_modal").modal('show');
+        });
+
+        $(".pqsetting_color_btn").click(function () {
+            $("#pqsetting_color_modal").modal("show")
+        })
+
+        $(".pqsetting_modal_confirm").click(function () {
+            let entry = {
+                id: window.id,
+                code: $("#pqsetting_code").val(),
+                color: $("#pqsetting_color").val(),
+                display: $("#pqsetting_display").val(),
+                description: $("#pqsetting_description").val()
+            }
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pqsetting/${$("#modal_type").val() == "0" ? 'createpqsetting' : 'updatepqsetting'}`,
+                method: "POST",
+                data: entry,
+                dataType: "text",
+                success: function (data) {
+                    handleTableResponse(data, '#pqsetting_tb', $("#modal_type").val() == "0" ? 'Add' : 'Update');
+                }
+            });
+        });
+
+        $(document).on("click", ".pqsetting_edit_btn", function () {
+            $("#modal_type").val("1")
+            window.id = $(this).parent().attr("idkey");
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pqsetting/readOnepqsetting',
+                method: "POST",
+                data: { id: window.id },
+                dataType: "json",
+                success: function (data) {
+                    $("#pqsetting_code").val(data['code']);
+                    $("#pqsetting_color_name").text(data['color']);
+                    $("#pqsetting_color").val(data['color']);
+                    $("#pqsetting_display").val(data['display']);
+                    $("#pqsetting_description").val(data['description']);
+
+                    $("#pqsetting_modal").modal('show');
+                }
+            });
+        });
+
+        $(document).on("click", ".pqsetting_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pqsetting/deletepqsetting',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "ok") {
+                                pqsetting_tb.ajax.reload()
+                                toastr.success("Deleted Successfully!")
+                            } else {
+                                toastr.error("Action Failed!")
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on('input', '#pqsetting_color', e => {
+            $("#pqsetting_color_name").text(e.target.value)
+        })
+
+        $(document).on('input', '#pqsetting_all_color', e => {
+            $("#pqsetting_all_color_name").text(e.target.value)
+        })
+
+        // backgrounds
+        $(".bg_image_save").click(function () {
+            var uploadBtn = $(this)
+            uploadBtn.prop("disabled", true)
+
+            var fd = new FormData();
+
+            var image = $('#bg_image')[0].files;
+            if (image.length > 0) {
+                fd.append('image', image[0]);
+            } else {
+                toastr.info("Please select a background image");
+                return;
+            }
+
+            $.ajax({
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total * 100;
+                            $('#progressBar-image').val(percentComplete);
+                            $('#progressPercentage-image').text(Math.round(percentComplete) + '%');
+                        }
+                    }, false);
+                    return xhr;
+                },
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/settings/updateFileForImage',
+                method: "POST",
+                data: fd,
+                contentType: false,
+                processData: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.msg == "ok") {
+                        toastr.success("Uploaded Successfully!")
+                        $("#bg-preview-image").attr("src", `{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${data.name}`)
+                    } else {
+                        toastr.warning("Action Failed")
+                    }
+                    uploadBtn.prop("disabled", false)
+                },
+                error: function (error) {
+                    toastr.error(error)
+                    uploadBtn.prop("disabled", false)
+                }
+            });
+        })
+
+        $(".bg_video_save").click(function () {
+            var uploadBtn = $(this)
+            uploadBtn.prop("disabled", true)
+
+            var fd = new FormData();
+
+            var video = $('#bg_video')[0].files;
+            if (video.length > 0) {
+                fd.append('video', video[0]);
+            } else {
+                toastr.info("Please select a background video");
+                return;
+            }
+
+            $.ajax({
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total * 100;
+                            $('#progressBar-video').val(percentComplete);
+                            $('#progressPercentage-video').text(Math.round(percentComplete) + '%');
+                        }
+                    }, false);
+                    return xhr;
+                },
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/settings/updateFileForVideo',
+                method: "POST",
+                data: fd,
+                contentType: false,
+                processData: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.msg == "ok") {
+                        toastr.success("Uploaded Successfully!")
+
+                        const video = document.getElementById("bg-preview-video")
+                        const source = video.getElementsByTagName('source')
+                        video.src = `{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${data.name}`
+                        source.src = `{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/pq/${data.name}`
+                        video.load();
+                        video.play();
+
+                        uploadBtn.prop("disabled", false)
+                    } else {
+                        toastr.warning("Action Failed")
+                        uploadBtn.prop("disabled", false)
+                    }
+                },
+                error: function (error) {
+                    toastr.error(error)
+                }
+            });
+        })
+
+        $('input[name="bg-radio"]').click(function (e) {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/settings/updateBgStatus',
+                method: "POST",
+                data: {
+                    value: e.target.value
+                },
+                dataType: "text",
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                    } else {
+                        toastr.error("Action Failed!")
+                    }
+                }
+            });
+        })
+
+        $("#bg-text").click(function (e) {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/settings/updateTextStatus',
+                method: "POST",
+                data: {
+                    value: $(this).prop("checked") == true ? "true" : "false"
+                },
+                dataType: "text",
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                    } else {
+                        toastr.error("Action Failed!")
+                    }
+                }
+            });
+        })
+
+        $(".pqsetting_color_modal_confirm").click(function () {
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pqsetting/updatealltextcolor',
+                method: "POST",
+                data: { color: $("#pqsetting_all_color").val() },
+                dataType: "text",
+                success: function (data) {
+                    if (data == "ok") {
+                        $("#pqsetting_color_modal").modal("hide")
+                        pqsetting_tb.ajax.reload()
+                        toastr.success("Updated Successfully!")
+                    } else {
+                        toastr.error("Action Failed!")
+                    }
+                }
+            });
+        })
+
+        // footer
+        $(".bg_footer_save").click(function () {
+            $.ajax({
+                url: `{{env.HOST_URL}}{{env.PREFIX_URL}}/settings/setBackgroundFooter`,
+                method: "POST",
+                data: { value: $("#bg_footer").val() },
+                dataType: "text",
+                success: function (data) {
+                    if (data == "ok") {
+                        toastr.success("Saved Successfully!")
+                    } else {
+                        toastr.warning("Failed in save")
+                    }
+                },
+                error: function (error) {
+                    toastr.error(error)
+                }
+            });
+        })
+    });
+</script>
