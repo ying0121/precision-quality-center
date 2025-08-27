@@ -121,7 +121,7 @@ exports.security = async (req, res, next) => {
 			return res.redirect('/security');
 		}
 
-		const user_security = await UserSecurity.findOne({ where: { user_id: req.session.user.id } })
+		const user_security = await UserSecurity.findOne({ where: { user_id: req.session.user.id, question_id: req.session.question_id } })
 		if (user_security) {
 			bcrypt.compare(req.body.inputAnswer, user_security.answer).then(doMatch => {
 				if (doMatch) {

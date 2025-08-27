@@ -126,9 +126,16 @@
     {{#if loginPage}}
     <script type="text/javascript">
         $('.toggle-password').on('click', function () {
-            let passwordInput = $('#inputPassword');
-            let type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+            const passwordInput = $('#inputPassword');
+            const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
             passwordInput.attr('type', type);
+            $(this).toggleClass('fa-eye fa-eye-slash');
+        });
+
+        $('.toggle-answer').on('click', function () {
+            const answerInput = $('#inputAnswer');
+            const type = answerInput.attr('type') === 'password' ? 'text' : 'password';
+            answerInput.attr('type', type);
             $(this).toggleClass('fa-eye fa-eye-slash');
         });
 
