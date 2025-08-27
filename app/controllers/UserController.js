@@ -10,7 +10,7 @@ const permission_name = ["USERS"];
 
 exports.userPage = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 2 * 3 * 5 * 7; // create && read && update && delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.render('403')
 
@@ -19,7 +19,7 @@ exports.userPage = async (req, res, next) => {
 
 exports.createUser = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -49,7 +49,7 @@ exports.createUser = async (req, res, next) => {
 
 exports.readUser = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -69,7 +69,7 @@ exports.readUser = async (req, res, next) => {
 
 exports.readUserNames = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -83,7 +83,7 @@ exports.readUserNames = async (req, res, next) => {
 
 exports.readOneUserById = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -97,7 +97,7 @@ exports.readOneUserById = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -139,7 +139,7 @@ exports.updatePassword = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -153,7 +153,7 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.setAnswer = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -185,7 +185,7 @@ exports.setAnswer = async (req, res, next) => {
 
 exports.updateClinic = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 

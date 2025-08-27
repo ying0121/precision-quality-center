@@ -51,7 +51,7 @@ const sendEmail = async (params, res) => {
 
 exports.ticketPage = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 2 * 3 * 5 * 7; // create && read && update && delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission)
     if (!_status) return res.render('403')
 
@@ -60,7 +60,7 @@ exports.ticketPage = async (req, res, next) => {
 
 exports.createTicket = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -134,7 +134,7 @@ exports.createTicket = async (req, res, next) => {
 
 exports.readTicket = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -178,7 +178,7 @@ exports.readTicket = async (req, res, next) => {
 
 exports.readTicketById = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -192,7 +192,7 @@ exports.readTicketById = async (req, res, next) => {
 
 exports.updateTicket = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -263,7 +263,7 @@ exports.updateTicket = async (req, res, next) => {
 
 exports.deleteTicket = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -323,7 +323,7 @@ exports.deleteTicket = async (req, res, next) => {
 
 exports.calculateCounts = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 

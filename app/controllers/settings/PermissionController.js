@@ -8,7 +8,7 @@ const permission_name = ["SETTING_PERMISSION"];
 
 exports.permissionPage = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 2 * 3 * 5 * 7; // create && read && update && delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.render('403')
 
@@ -17,7 +17,7 @@ exports.permissionPage = async (req, res, next) => {
 
 exports.addPermission = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -35,7 +35,7 @@ exports.addPermission = async (req, res, next) => {
 
 exports.readPermission = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -49,7 +49,7 @@ exports.readPermission = async (req, res, next) => {
 
 exports.readOnePermission = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -63,7 +63,7 @@ exports.readOnePermission = async (req, res, next) => {
 
 exports.updatePermission = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -85,7 +85,7 @@ exports.updatePermission = async (req, res, next) => {
 
 exports.deletePermission = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 

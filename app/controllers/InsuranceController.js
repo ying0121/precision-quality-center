@@ -7,7 +7,7 @@ const permission_name = ["INSURANCES"];
 
 exports.insurancePage = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 2 * 3 * 5 * 7; // create && read && update && delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.render('403')
 
@@ -16,7 +16,7 @@ exports.insurancePage = async (req, res, next) => {
 
 exports.createInsurance = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -43,7 +43,7 @@ exports.createInsurance = async (req, res, next) => {
 
 exports.readInsurances = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -57,7 +57,7 @@ exports.readInsurances = async (req, res, next) => {
 
 exports.readByClinic = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -71,7 +71,7 @@ exports.readByClinic = async (req, res, next) => {
 
 exports.readOneInsurance = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -85,7 +85,7 @@ exports.readOneInsurance = async (req, res, next) => {
 
 exports.readOnlyNames = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -99,7 +99,7 @@ exports.readOnlyNames = async (req, res, next) => {
 
 exports.updateInsurance = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -129,7 +129,7 @@ exports.updateInsurance = async (req, res, next) => {
 
 exports.deleteInsurance = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -146,7 +146,7 @@ exports.deleteInsurance = async (req, res, next) => {
 
 exports.uploadInsuranceImage = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 

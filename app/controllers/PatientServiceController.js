@@ -7,7 +7,7 @@ const permission_name = ["PATIENT_SERVICES", "PATIENT_SERVICE_CATEGORY"];
 
 exports.categoryPage = async (req, res, next) => {
 	// permission
-	_permission = 3; // read
+	_permission = 2 * 3 * 5 * 7; // create && read && update && delete
 	const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
 	if (!_status) return res.render('403')
 
@@ -103,7 +103,7 @@ exports.deleteCategory = async (req, res, next) => {
 
 exports.servicePage = async (req, res, next) => {
 	// permission
-	_permission = 3; // read
+	_permission = 2 * 3 * 5 * 7; // create && read && update && delete
 	const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[1], _permission);
 	if (!_status) return res.render('403')
 

@@ -16,7 +16,7 @@ const permission_name = ["SETTING_SURVEY"];
 
 exports.surveyPage = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 2 * 3 * 5 * 7; // create && read && update && delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.render('403')
 
@@ -26,7 +26,7 @@ exports.surveyPage = async (req, res, next) => {
 // survey category
 exports.addSurveyCategory = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -46,7 +46,7 @@ exports.addSurveyCategory = async (req, res, next) => {
 
 exports.readSurveyCategory = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -66,7 +66,7 @@ exports.readSurveyCategory = async (req, res, next) => {
 
 exports.readOneSurveyCategory = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -89,7 +89,7 @@ exports.readOneSurveyCategory = async (req, res, next) => {
 
 exports.updateSurveyCategory = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -111,7 +111,7 @@ exports.updateSurveyCategory = async (req, res, next) => {
 
 exports.deleteSurveyCategory = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -126,7 +126,7 @@ exports.deleteSurveyCategory = async (req, res, next) => {
 // survey type
 exports.addSurveyTypes = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -145,7 +145,7 @@ exports.addSurveyTypes = async (req, res, next) => {
 
 exports.readSurveyTypes = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -159,7 +159,7 @@ exports.readSurveyTypes = async (req, res, next) => {
 
 exports.readOneSurveyTypes = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -175,7 +175,7 @@ exports.readOneSurveyTypes = async (req, res, next) => {
 
 exports.updateSurveyTypes = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -196,7 +196,7 @@ exports.updateSurveyTypes = async (req, res, next) => {
 
 exports.deleteSurveyTypes = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -211,7 +211,7 @@ exports.deleteSurveyTypes = async (req, res, next) => {
 // survey question
 exports.addSurveyQuestion = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -233,7 +233,7 @@ exports.addSurveyQuestion = async (req, res, next) => {
 
 exports.readSurveyQuestion = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -257,7 +257,7 @@ exports.readSurveyQuestion = async (req, res, next) => {
 
 exports.readOneSurveyQuestion = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -280,7 +280,7 @@ exports.readOneSurveyQuestion = async (req, res, next) => {
 
 exports.updateSurveyQuestion = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -304,7 +304,7 @@ exports.updateSurveyQuestion = async (req, res, next) => {
 
 exports.deleteSurveyQuestion = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -319,7 +319,7 @@ exports.deleteSurveyQuestion = async (req, res, next) => {
 // survey footer
 exports.readSurveyFooter = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -335,7 +335,7 @@ exports.readSurveyFooter = async (req, res, next) => {
 
 exports.updateSurveyFooter = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -364,7 +364,7 @@ exports.updateSurveyFooter = async (req, res, next) => {
 // survey response
 exports.addSurveyResponse = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -386,7 +386,7 @@ exports.addSurveyResponse = async (req, res, next) => {
 
 exports.readSurveyResponse = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -410,7 +410,7 @@ exports.readSurveyResponse = async (req, res, next) => {
 
 exports.readOneSurveyResponse = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -432,7 +432,7 @@ exports.readOneSurveyResponse = async (req, res, next) => {
 
 exports.updateSurveyResponse = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -455,7 +455,7 @@ exports.updateSurveyResponse = async (req, res, next) => {
 
 exports.deleteSurveyResponse = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -469,7 +469,7 @@ exports.deleteSurveyResponse = async (req, res, next) => {
 
 exports.updateSurveyResponseItem = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -496,7 +496,7 @@ exports.updateSurveyResponseItem = async (req, res, next) => {
 // survey question type
 exports.addSurveyQuestionType = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -517,7 +517,7 @@ exports.addSurveyQuestionType = async (req, res, next) => {
 
 exports.readSurveyQuestionType = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -531,7 +531,7 @@ exports.readSurveyQuestionType = async (req, res, next) => {
 
 exports.readOneSurveyQuestionType = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -547,7 +547,7 @@ exports.readOneSurveyQuestionType = async (req, res, next) => {
 
 exports.updateSurveyQuestionType = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -570,7 +570,7 @@ exports.updateSurveyQuestionType = async (req, res, next) => {
 
 exports.deleteSurveyQuestionType = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -585,7 +585,7 @@ exports.deleteSurveyQuestionType = async (req, res, next) => {
 // event status
 exports.addEventStatus = async (req, res, next) => {
     // permission
-    _permission = 2; // create
+    const _permission = 2; // create
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -604,7 +604,7 @@ exports.addEventStatus = async (req, res, next) => {
 
 exports.readEventStatus = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -618,7 +618,7 @@ exports.readEventStatus = async (req, res, next) => {
 
 exports.readOneEventStatus = async (req, res, next) => {
     // permission
-    _permission = 3; // read
+    const _permission = 3; // read
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -634,7 +634,7 @@ exports.readOneEventStatus = async (req, res, next) => {
 
 exports.updateEventStatus = async (req, res, next) => {
     // permission
-    _permission = 5; // write
+    const _permission = 5; // write
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
@@ -655,7 +655,7 @@ exports.updateEventStatus = async (req, res, next) => {
 
 exports.deleteEventStatus = async (req, res, next) => {
     // permission
-    _permission = 7; // delete
+    const _permission = 7; // delete
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
     if (!_status) return res.status(403).send("")
 
