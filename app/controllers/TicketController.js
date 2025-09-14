@@ -55,7 +55,11 @@ exports.ticketPage = async (req, res, next) => {
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission)
     if (!_status) return res.render('403')
 
-    res.render('tickets')
+    // get your ticket count
+    console.log(req.session.user)
+    const ticketCount = await Ticket.count({ where: { user_id: req.session.user.id } })
+
+    res.render('tickets', { ticket_count: ticketCount })
 }
 
 exports.createTicket = async (req, res, next) => {
