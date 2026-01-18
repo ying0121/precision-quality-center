@@ -56,7 +56,6 @@ exports.ticketPage = async (req, res, next) => {
     if (!_status) return res.render('403')
 
     // get your ticket count
-    console.log(req.session.user)
     const ticketCount = await Ticket.count({ where: { user_id: req.session.user.id } })
 
     res.render('tickets', { ticket_count: ticketCount })

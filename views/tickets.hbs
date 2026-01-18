@@ -130,8 +130,8 @@
 </div>
 <div class="row mb-5">
     <div class="col-md-3">
-        <div data="0" class="w-100 h-120px bg-white static-body cursor-pointer">
-            <div class="p-20px w-100 d-flex justify-content-between">
+        <div data="0" class="w-100 h-120px bg-white static-body">
+            <div class="p-20px w-100 d-flex justify-content-between cursor-pointer">
                 <span class="d-inline-block round-5px">
                     <i class="p-15px fs-3 fa fa-globe text-info bg-light-info static-mark"></i>
                 </span>
@@ -300,7 +300,7 @@
                             <h6>Priority <span class="text-danger">*</span></h6>
                             <select id="ticket_priority" class="form-control custom-select">
                                 <option value="1"> High </option>
-                                <option value="2"> Midium </option>
+                                <option value="2"> Medium </option>
                                 <option value="3"> Low </option>
                             </select>
                         </div>
@@ -318,7 +318,6 @@
                 </div>
             </div>
             <!-- Modal footer -->
-            </form>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-primary" id="ticket_save_btn">Done</button>
                 <button type="button" class="btn btn-light-danger" data-dismiss="modal">Close</button>
@@ -327,6 +326,7 @@
     </div>
 </div>
 <script>
+    let _status = 0
     let _old_status = 0
     $(document).ready(async function () {
         // get clinics
@@ -395,7 +395,7 @@
                 "data": function (d) {
                     d.clinic_id = $("#ticket_filter_clinic").val() ? $("#ticket_filter_clinic").val() : 0
                     d.assigned_to = $("#ticket_filter_assigned_to").val() ? $("#ticket_filter_assigned_to").val() : 0
-                    d.status = $("#ticket_filter_status").val() ? $("#ticket_filter_status").val() : 0
+                    d.status = _status
                 }
             },
             order: [[0, "DESC"]],
@@ -605,7 +605,14 @@
         })
 
         $("#ticket_filter_status").change(function () {
+            _status = $("#ticket_filter_status").val() ? $("#ticket_filter_status").val() : 0
             ticket_table.ajax.reload()
         })
+    
+        $(".static-body").click(function () {
+            _status = $(this).attr("data")
+            ticket_table.ajax.reload()
+        })
+
     })
 </script>

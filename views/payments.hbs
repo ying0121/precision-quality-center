@@ -122,17 +122,16 @@
     </div>
 </div>
 <div class="row mb-5">
+    {{!-- All Payments --}}
     <div class="col-md-3">
         <div data="0" class="w-100 h-120px bg-white static-body cursor-pointer">
             <div class="p-20px w-100 d-flex justify-content-between">
                 <span class="d-inline-block round-5px">
-                    <i class="p-15px fs-3 fa flaticon2-delivery-package text-primary bg-light-primary static-mark"></i>
+                    <i class="p-15px fs-3 fa fa-money-bill text-primary bg-light-primary static-mark"></i>
                 </span>
                 <span class="d-inline-block p-2px">
-                    <h4 class="d-flex justify-content-end text-black">SERVICES</h4>
-                    <span id="payment_services"
-                        class="d-flex justify-content-end text-primary fs-5 cursor-pointer stt-number">1
-                    </span>
+                    <h4 class="d-flex justify-content-end text-black text-uppercase">ALL</h4>
+                    <span id="payment_all" class="d-flex justify-content-end text-primary fs-5 cursor-pointer stt-number">0</span>
                 </span>
             </div>
             <div class="px-20px">
@@ -140,35 +139,16 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div data="1" class="w-100 h-120px bg-white static-body">
-            <div class="p-20px w-100 d-flex justify-content-between cursor-pointer">
-                <span class="d-inline-block round-5px">
-                    <i class="p-15px fs-3 fa fa-globe text-danger bg-light-danger static-mark"></i>
-                </span>
-                <span class="d-inline-block p-2px">
-                    <h4 class="d-flex justify-content-end text-black">DOMAINS</h4>
-                    <span id="payment_domains"
-                        class="d-flex justify-content-end text-danger fs-5 cursor-pointer stt-number">1
-                    </span>
-                </span>
-            </div>
-            <div class="px-20px">
-                <hr class="m-0">
-            </div>
-        </div>
-    </div>
+    {{!-- Paid Payments --}}
     <div class="col-md-3">
         <div data="2" class="w-100 h-120px bg-white static-body">
             <div class="p-20px w-100 d-flex justify-content-between cursor-pointer">
                 <span class="d-inline-block round-5px">
-                    <i class="p-15px fs-3 la la-sms text-success bg-light-success static-mark"></i>
+                    <i class="p-15px fs-3 fa fa-thumbs-up text-success bg-light-success static-mark"></i>
                 </span>
                 <span class="d-inline-block p-2px">
-                    <h4 class="d-flex justify-content-end text-black">TICKETS</h4>
-                    <span id="payment_tickets"
-                        class="d-flex justify-content-end text-success fs-5 cursor-pointer stt-number">5
-                    </span>
+                    <h4 class="d-flex justify-content-end text-black text-uppercase">Paid</h4>
+                    <span id="payment_paid" class="d-flex justify-content-end text-success fs-5 cursor-pointer stt-number">0</span>
                 </span>
             </div>
             <div class="px-20px">
@@ -176,17 +156,33 @@
             </div>
         </div>
     </div>
+    {{!-- Pending Payments --}}
+    <div class="col-md-3">
+        <div data="1" class="w-100 h-120px bg-white static-body">
+            <div class="p-20px w-100 d-flex justify-content-between cursor-pointer">
+                <span class="d-inline-block round-5px">
+                    <i class="p-15px fs-3 fa fa-hourglass-half text-warning bg-light-warning static-mark"></i>
+                </span>
+                <span class="d-inline-block p-2px">
+                    <h4 class="d-flex justify-content-end text-black text-uppercase">Pending</h4>
+                    <span id="payment_pending" class="d-flex justify-content-end text-warning fs-5 cursor-pointer stt-number">0</span>
+                </span>
+            </div>
+            <div class="px-20px">
+                <hr class="m-0">
+            </div>
+        </div>
+    </div>
+    {{!-- Failed Payments --}}
     <div class="col-md-3">
         <div data="3" class="w-100 h-120px bg-white static-body">
             <div class="p-20px w-100 d-flex justify-content-between cursor-pointer">
                 <span class="d-inline-block round-2px">
-                    <i class="p-15px fs-3 fa fa-money-check text-primary bg-light-primary static-mark"></i>
+                    <i class="p-15px fs-3 fa fa-exclamation-triangle text-danger bg-light-danger static-mark"></i>
                 </span>
                 <span class="d-inline-block p-2px">
-                    <h4 class="d-flex justify-content-end text-black">INVOICES</h4>
-                    <span id="payment_invoices"
-                        class="d-flex justify-content-end text-primary fs-5 cursor-pointer stt-number">1
-                    </span>
+                    <h4 class="d-flex justify-content-end text-black text-uppercase">Failed</h4>
+                    <span id="payment_failed" class="d-flex justify-content-end text-danger fs-5 cursor-pointer stt-number">0</span>
                 </span>
             </div>
             <div class="px-20px">
@@ -195,3 +191,168 @@
         </div>
     </div>
 </div>
+
+<div class="row my-3 p-10 bg-white border rounded">
+    <div>
+        <h3>Payment Transactions</h3>
+    </div>
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div class="d-flex justify-content-between gap-3 align-items-center w-100">
+            <div class="input-group" style="width: 250px;">
+                <input type="text" class="form-control" id="payment_search_input" placeholder="Search payments...">
+            </div>
+            <button type="button" class="btn btn-danger" id="delete_all_btn">
+                <i class="fas fa-trash"></i> Delete All
+            </button>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="payment_transactions_tb">
+                <thead>
+                    <th>Payment ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Amount</th>
+                    <th>Card Number</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(async function () {
+        const paymentTransactionTable = $('#payment_transactions_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "searching": true,
+            "dom": 'lrtip', // Remove the default search box (f = filter/search)
+            "language": {
+                "search": "_INPUT_",
+                "searchPlaceholder": "Search records",
+            },
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/payments/read",
+                "type": "POST"
+            },
+            "columns": [
+                {
+                    data: 'stripe_payment_intent_id',
+                    render: function (data, type, row) {
+                        return row.stripe_payment_intent_id ? row.stripe_payment_intent_id : 'N/A';
+                    }
+                },
+                { data: 'name' },
+                { data: 'email' },
+                { data: 'phone' },
+                {
+                    data: 'amount',
+                    render: function (data, type, row) {
+                        return row.amount ? "$" + (row.amount / 100).toFixed(2) : 'N/A';
+                    }
+                },
+                {
+                    data: 'card_last4',
+                    render: function (data, type, row) {
+                        return row.card_last4 ? "•••• •••• •••• " + row.card_last4 : 'N/A';
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return `<span class="p-2 text-${row.status == "paid" ? "success" : row.status == "pending" ? "warning" : "danger"} bg-light-${row.status == "paid" ? "success" : row.status == "pending" ? "warning" : "danger"} rounded">${row.status.toUpperCase()}</span>`
+                    }
+                },
+                {
+                    data: 'createdAt',
+                    render: function (data, type, row) {
+                        return moment(row.createdAt).format('DD/MM/YYYY HH:mm:ss');
+                    }
+                },
+                {
+                    data: 'actions',
+                    render: function (data, type, row) {
+                        return `<div idkey="${row.id}">
+                                    <span class="btn btn-icon btn-sm btn-light-danger payment_delete_btn"><i class="fas fa-trash"></i></span>
+                                </div>`
+                    }
+                }
+            ]
+        });
+
+        // Custom search input functionality
+        $('#payment_search_input').on('keyup', function () {
+            paymentTransactionTable.search(this.value).draw();
+        });
+
+        $(document).on("click", ".payment_delete_btn", function () {
+            window.id = $(this).parent().attr("idkey");
+            var tmp = $(this).parent().parent().parent();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/payments/delete',
+                        method: "POST",
+                        data: { id: window.id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.status == "success") {
+                                toastr.success("Deleted Successfully!")
+                                paymentTransactionTable.ajax.reload()
+                            } else {
+                                toastr.error(data.message)
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on("click", "#delete_all_btn", function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will delete ALL payment records! You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete all!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/payments/delete-all',
+                        method: "POST",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.status == "success") {
+                                toastr.success("All payments deleted successfully!")
+                                paymentTransactionTable.ajax.reload()
+                            } else {
+                                toastr.error(data.message)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error("Failed to delete payments")
+                        }
+                    });
+                }
+            });
+        });
+    
+    });
+</script>

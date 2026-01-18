@@ -1,18 +1,22 @@
 const path = require('path');
 // load dependencies
 const env = require('dotenv');
-//const csrf = require('csurf');
+const PaymentsController = require('./app/controllers/PaymentsController');
 const express = require('express');
 const flash = require('express-flash');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const expressHbs = require('express-handlebars');
+const router = express.Router();
 const SequelizeStore = require("connect-session-sequelize")(session.Store); // initalize sequelize with session store
 const cors = require('cors');
 
 const app = express();
-//const csrfProtection = csrf();
-const router = express.Router();
+
+env.config();
+
+// Stripe Wehhook
+app.post('/webhook', express.raw({type: 'application/json'}), PaymentsController.stripeWebhook);
 
 //Loading Routes
 const landingRoutes = require('./routes/dashboard/landing');
@@ -20,7 +24,6 @@ const webRoutes = require('./routes/web');
 const sequelize = require('./config/database');
 const errorController = require('./app/controllers/ErrorController');
 
-env.config();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use((req, res, next) => {
@@ -79,12 +82,12 @@ app.set('views', 'views');
 
 app.use(cors());
 app.use("/", landingRoutes);
+app.post('/payment-intent', PaymentsController.createPaymentIntent);
 app.use(process.env.PREFIX_URL, webRoutes);
 
 app.use(errorController.pageNotFound);
 
-sequelize
-	.sync()
+sequelize.sync()
 	// .sync({ alter: true })
 	.then(() => {
 		app.listen(process.env.PORT);
