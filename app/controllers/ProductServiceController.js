@@ -1,6 +1,6 @@
 
 const ProductService = require('../models/ProductService');
-const ProductCategory = require('../models/ProductCategory');
+const ProductCategory = require('../models/settings/ProductCategory');
 const util_permission = require('../utilities/permission');
 const util_upload = require('../utilities/upload');
 const multer = require('multer');

@@ -31,6 +31,7 @@ const security_questionRoutes = require('./settings/securityquestionRoutes');
 const generalRoutes = require("./settings/generalRoutes");
 const roleRoutes = require('./settings/roleRoutes');
 const permissionRoutes = require('./settings/permissionRoutes');
+const productCategoryRoutes = require('./settings/productCategoryRoutes');
 
 const apiRoutes = require('./apiRoutes');
 
@@ -70,6 +71,7 @@ router.use('/setting/squestion', isAuth, security_questionRoutes);
 router.use('/setting/general', isAuth, generalRoutes);
 router.use('/setting/role', isAuth, roleRoutes);
 router.use('/setting/permission', isAuth, permissionRoutes);
+router.use('/setting/product_cate', isAuth, productCategoryRoutes);
 
 router.use('/api', apiRoutes);
 
