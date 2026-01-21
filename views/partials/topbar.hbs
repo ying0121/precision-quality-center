@@ -4,6 +4,7 @@
             <h5 class="text-dark font-weight-bold">Welcome {{username}}</h5>
         </div>
         <div class="setting-icons d-flex justify-content-between">
+            {{!-- Setting Icons --}}
             <div class="topbar container-fluid d-flex justify-content-end">
                 <div class="dropdown">
                     <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px">
@@ -84,15 +85,25 @@
                     </div>
                 </div>
             </div>
+            {{!-- User Icons --}}
             <div class="topbar container-fluid d-flex justify-content-end">
                 <div class="dropdown">
                     <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px">
-                        <div class="btn btn-icon btn-clean btn-dropdown btn-lg mr-1">
-                            <i class="fa fa-user"></i>
+                        <div class="btn-dropdown cursor-pointer btn-lg mr-1">
+                            <div class="d-flex align-items-center justify-content-center bg-primary rounded-circle text-white font-weight-bold" style="width: 40px; height: 40px; font-size: 18px;">
+                                {{userlogo}}
+                            </div>
                         </div>
                     </div>
-                    <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right">
+                    <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right" style="width: 210px !important;">
                         <ul class="navi navi-hover py-4">
+                            <li class="navi-item">
+                                <div class="m-3">
+                                    <div class="font-weight-bold">{{username}}</div>
+                                    <div>{{user_email}}</div>
+                                </div>
+                            </li>
+                            <hr>
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/logout" class="navi-link"
                                     onclick="localStorage.setItem('once_logged_in','false');">
@@ -106,9 +117,7 @@
         </div>
     </div>
 </div>
+
 <script>
-    const id = "{{user.id}}"
-    if (id) {
-        localStorage.setItem("user_id", "{{user.id}}")
-    }
+    localStorage.setItem("user_id", "{{user_id}}")
 </script>

@@ -234,3 +234,18 @@ exports.readCategories = async (req, res, next) => {
         res.status(500).send(error.message);
     }
 };
+
+exports.chosenProductService = async (req, res, next) => {
+    // permission
+    const _permission = 3; // read
+    const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
+
+    if (!_status) return res.status(403).send("")
+
+    try {
+        const productService = await ProductService.findOne({ where: { id: req.body.id } });
+        res.status(200).json({ data: productService });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};

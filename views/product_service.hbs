@@ -191,7 +191,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label">Description</label>
                         <div class="col-lg-9">
-                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description"></textarea>
+                            <div class="summernote" id="description"></div>
                         </div>
                     </div>
                     {{!-- Price --}}
@@ -261,6 +261,11 @@
 
 <script>
     $(document).ready(function() {
+        $('#description').summernote({
+            tabsize: 1,
+            height: 150
+        });
+        
         // Load categories
         $.ajax({
             url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/read-categories',
@@ -500,23 +505,33 @@
         // Edit button click
         $(document).on('click', '.product_service_edit_btn', function() {
             const id = $(this).parent().attr('idkey');
-            const rowData = productServiceTable.rows().data().toArray().find(row => row.id == id);
-            
-            if (rowData) {
-                $('#modal_title').text('Edit Product/Service');
-                $('#product_service_id').val(rowData.id);
-                $('#name').val(rowData.name);
-                $('#description').val(rowData.description);
-                $('#price').val(rowData.price);
-                $('#billing_type').val(rowData.billing_type);
-                $('#recurring_interval').val(rowData.recurring_interval);
-                $('#stock_quantity').val(rowData.stock_quantity);
-                $('#usage_limit').val(rowData.usage_limit);
-                $('#status').val(rowData.status);
-                $('#category_id').val(rowData.category_id);
-                
-                $('#product_service_modal').modal('show');
-            }
+
+            $.ajax({
+                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/chosen',
+                method: 'POST',
+                dataType: 'json',
+                data: { id: id },
+                success: function(response) {
+                    const result = response.data
+                    
+                    $('#modal_title').text('Edit Product/Service');
+                    $('#product_service_id').val(result.id);
+                    $('#name').val(result.name);
+                    $('#description').summernote("code", result.description);
+                    $('#price').val(result.price);
+                    $('#billing_type').val(result.billing_type);
+                    $('#recurring_interval').val(result.recurring_interval);
+                    $('#stock_quantity').val(result.stock_quantity);
+                    $('#usage_limit').val(result.usage_limit);
+                    $('#status').val(result.status);
+                    $('#category_id').val(result.category_id);
+                    
+                    $('#product_service_modal').modal('show');
+                },
+                error: function() {
+                    toastr.error('Failed in server');
+                }
+            })
         });
 
         // Save button click
@@ -536,7 +551,7 @@
                 id: id,
                 category_id: $('#category_id').val(),
                 name: $('#name').val(),
-                description: $('#description').val(),
+                description: $('#description').summernote("code"),
                 price: $('#price').val(),
                 billing_type: $('#billing_type').val(),
                 recurring_interval: $('#recurring_interval').val(),

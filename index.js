@@ -53,8 +53,12 @@ app.use(session({
 app.use(flash());
 
 app.use((req, res, next) => {
-	if (req.session.user)
+	if (req.session.user) {
+		res.locals.user_id = req.session.user.id;
 		res.locals.username = req.session.user.fname + " " + req.session.user.lname;
+		res.locals.userlogo = req.session.user.fname[0].toUpperCase();
+		res.locals.user_email = req.session.user.email;
+	}
 	res.locals.isAuthenticated = req.session.isLoggedIn;
 	res.locals.env = process.env;
 	//res.locals.csrfToken = req.csrfToken();
