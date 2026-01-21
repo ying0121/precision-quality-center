@@ -1,0 +1,317 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div>
+        <h3>Payment Cycles</h3>
+    </div>
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div class="d-flex justify-content-between gap-3 align-items-center w-100">
+            <div class="input-group" style="width: 250px;">
+                <input type="text" class="form-control" id="cycle_search_input" placeholder="Search...">
+            </div>
+            <button type="button" class="btn btn-primary" id="add_cycle_btn">
+                <i class="fas fa-plus"></i> Add New
+            </button>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="payment_cycle_tb">
+                <thead>
+                    <th>Category</th>
+                    <th>Cycle Code</th>
+                    <th>Cycle Name</th>
+                    <th>Interval</th>
+                    <th>Recurring</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{!-- Add/Edit Modal --}}
+<div class="modal fade" id="payment_cycle_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal_title">Add Payment Cycle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="cycle_id" name="id">
+                    {{!-- Category --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Category <span class="text-danger">*</span></h6>
+                            <select class="form-control" id="category_id" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Cycle Code --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Cycle Code <span class="text-danger">*</span></h6>
+                            <input id="cycle_code" class="form-control" type="text" required/>
+                        </div>
+                    </div>
+                    {{!-- Cycle Name --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Cycle Name <span class="text-danger">*</span></h6>
+                            <input id="cycle_name" class="form-control" type="text" required/>
+                        </div>
+                    </div>
+                    {{!-- Interval Value --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Interval Value</h6>
+                            <input id="interval_value" class="form-control" type="number" placeholder="e.g., 30"/>
+                        </div>
+                    </div>
+                    {{!-- Interval Unit --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Interval Unit</h6>
+                            <select class="form-control" id="interval_unit">
+                                <option value="day">Day</option>
+                                <option value="week">Week</option>
+                                <option value="month">Month</option>
+                                <option value="year">Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Is Recurring --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Is Recurring <span class="text-danger">*</span></h6>
+                            <select class="form-control" id="is_recurring" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Status --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Status <span class="text-danger">*</span></h6>
+                            <select class="form-control" id="status" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Description --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Description</h6>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save_cycle_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Load categories on page load
+        $.ajax({
+            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/payment_cycle/read-categories',
+            method: 'POST',
+            dataType: 'json',
+            success: function(response) {
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(category) {
+                        $('#category_id').append(`<option value="${category.id}">${category.category_name}</option>`);
+                    });
+                }
+            }
+        });
+
+        let paymentCycleTable = $('#payment_cycle_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "searching": true,
+            "dom": 'lrtip',
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/payment_cycle/read",
+                "type": "POST",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { 
+                    data: 'billing_cycle_category',
+                    render: function(data, type, row) {
+                        return data ? data.category_name : 'N/A';
+                    }
+                },
+                { data: 'cycle_code' },
+                { data: 'cycle_name' },
+                { 
+                    data: 'interval_value',
+                    render: function(data, type, row) {
+                        if (data && row.interval_unit) {
+                            return `${data} ${row.interval_unit}`;
+                        }
+                        return 'N/A';
+                    }
+                },
+                { 
+                    data: 'is_recurring',
+                    render: function(data, type, row) {
+                        return data == 1 ? '<span class="badge badge-info">Yes</span>' : '<span class="badge badge-secondary">No</span>';
+                    }
+                },
+                { 
+                    data: 'status',
+                    render: function(data, type, row) {
+                        const statusClass = data == 1 ? 'success' : 'danger';
+                        const statusText = data == 1 ? 'Active' : 'Inactive';
+                        return `<span class="badge badge-${statusClass}">${statusText}</span>`;
+                    }
+                },
+                { 
+                    data: 'id',
+                    render: function(data, type, row) {
+                        return `<div idkey="${data}">
+                                    <span class="btn btn-icon btn-sm btn-light-primary cycle_edit_btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                    <span class="btn btn-icon btn-sm btn-light-danger cycle_delete_btn" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                </div>`;
+                    }
+                }
+            ]
+        });
+
+        // Custom search input
+        $('#cycle_search_input').on('keyup', function() {
+            paymentCycleTable.search(this.value).draw();
+        });
+
+        // Add new button click
+        $('#add_cycle_btn').on('click', function() {
+            $('#modal_title').text('Add Payment Cycle');
+            $('#cycle_id').val('');
+            $('#category_id').val('');
+            $('#cycle_code').val('');
+            $('#cycle_name').val('');
+            $('#interval_value').val('');
+            $('#interval_unit').val('');
+            $('#is_recurring').val('1');
+            $('#status').val('1');
+            $('#description').val('');
+            $('#payment_cycle_modal').modal('show');
+        });
+
+        // Edit button click
+        $(document).on('click', '.cycle_edit_btn', function() {
+            const id = $(this).parent().attr('idkey');
+            const rowData = paymentCycleTable.rows().data().toArray().find(row => row.id == id);
+            
+            if (rowData) {
+                $('#modal_title').text('Edit Payment Cycle');
+                $('#cycle_id').val(rowData.id);
+                $('#category_id').val(rowData.category_id);
+                $('#cycle_code').val(rowData.cycle_code);
+                $('#cycle_name').val(rowData.cycle_name);
+                $('#interval_value').val(rowData.interval_value);
+                $('#interval_unit').val(rowData.interval_unit);
+                $('#is_recurring').val(rowData.is_recurring);
+                $('#status').val(rowData.status);
+                $('#description').val(rowData.description);
+                
+                $('#payment_cycle_modal').modal('show');
+            }
+        });
+
+        // Save button click
+        $('#save_cycle_btn').on('click', function() {
+            const id = $('#cycle_id').val();
+            const url = id ? 
+                '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/payment_cycle/update' : 
+                '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/payment_cycle/create';
+
+            const formData = {
+                id: id,
+                category_id: $('#category_id').val(),
+                cycle_code: $('#cycle_code').val(),
+                cycle_name: $('#cycle_name').val(),
+                interval_value: $('#interval_value').val(),
+                interval_unit: $('#interval_unit').val(),
+                is_recurring: $('#is_recurring').val(),
+                status: $('#status').val(),
+                description: $('#description').val()
+            };
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(id ? 'Cycle updated successfully!' : 'Cycle created successfully!');
+                        $('#payment_cycle_modal').modal('hide');
+                        paymentCycleTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message || 'Operation failed');
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An error occurred. Please try again.');
+                }
+            });
+        });
+
+        // Delete button click
+        $(document).on('click', '.cycle_delete_btn', function() {
+            const id = $(this).parent().attr('idkey');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/payment_cycle/delete',
+                        method: 'POST',
+                        data: { id: id },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                toastr.success('Cycle deleted successfully!');
+                                paymentCycleTable.ajax.reload();
+                            } else {
+                                toastr.error(response.message || 'Delete failed');
+                            }
+                        },
+                        error: function() {
+                            toastr.error('An error occurred. Please try again.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

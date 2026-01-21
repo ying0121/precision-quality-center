@@ -1,0 +1,296 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div>
+        <h3>Pay Types</h3>
+    </div>
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div class="d-flex justify-content-between gap-3 align-items-center w-100">
+            <div class="input-group" style="width: 250px;">
+                <input type="text" class="form-control" id="type_search_input" placeholder="Search...">
+            </div>
+            <button type="button" class="btn btn-primary" id="add_type_btn">
+                <i class="fas fa-plus"></i> Add New
+            </button>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="pay_type_tb">
+                <thead>
+                    <th>Type Code</th>
+                    <th>Type Name</th>
+                    <th>Description</th>
+                    <th>Service</th>
+                    <th>Product</th>
+                    <th>Subscription</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{!-- Add/Edit Modal --}}
+<div class="modal fade" id="pay_type_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal_title">Add Pay Type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="type_id" name="id">
+                    {{!-- Type Code --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Type Code <span class="text-danger">*</span></h6>
+                            <input id="type_code" class="form-control" type="text" required/>
+                        </div>
+                    </div>
+                    {{!-- Type Name --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Type Name <span class="text-danger">*</span></h6>
+                            <input id="type_name" class="form-control" type="text" required/>
+                        </div>
+                    </div>
+                    {{!-- Description --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Description</h6>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                    {{!-- Is Service --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Is Service</h6>
+                            <select class="form-control" id="is_service">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Is Product --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Is Product</h6>
+                            <select class="form-control" id="is_product">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Is Subscription --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Is Subscription</h6>
+                            <select class="form-control" id="is_subscription">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{!-- Status --}}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <h6>Status <span class="text-danger">*</span></h6>
+                            <select class="form-control" id="status">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save_type_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        let payTypeTable = $('#pay_type_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "searching": true,
+            "dom": 'lrtip',
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pay_type/read",
+                "type": "POST",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { data: 'type_code' },
+                { data: 'type_name' },
+                { 
+                    data: 'description',
+                    render: function(data, type, row) {
+                        return data || 'N/A';
+                    }
+                },
+                { 
+                    data: 'is_service',
+                    render: function(data, type, row) {
+                        return data == 1 ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>';
+                    }
+                },
+                { 
+                    data: 'is_product',
+                    render: function(data, type, row) {
+                        return data == 1 ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>';
+                    }
+                },
+                { 
+                    data: 'is_subscription',
+                    render: function(data, type, row) {
+                        return data == 1 ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>';
+                    }
+                },
+                { 
+                    data: 'status',
+                    render: function(data, type, row) {
+                        const statusClass = data == 1 ? 'success' : 'danger';
+                        const statusText = data == 1 ? 'Active' : 'Inactive';
+                        return `<span class="badge badge-${statusClass}">${statusText}</span>`;
+                    }
+                },
+                { 
+                    data: 'id',
+                    render: function(data, type, row) {
+                        return `<div idkey="${data}">
+                                    <span class="btn btn-icon btn-sm btn-light-primary type_edit_btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                    <span class="btn btn-icon btn-sm btn-light-danger type_delete_btn" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                </div>`;
+                    }
+                }
+            ]
+        });
+
+        // Custom search input
+        $('#type_search_input').on('keyup', function() {
+            payTypeTable.search(this.value).draw();
+        });
+
+        // Add new button click
+        $('#add_type_btn').on('click', function() {
+            $('#modal_title').text('Add Pay Type');
+            $('#type_id').val('');
+            $('#type_code').val('');
+            $('#type_name').val('');
+            $('#description').val('');
+            $('#is_service').val('0');
+            $('#is_product').val('0');
+            $('#is_subscription').val('0');
+            $('#status').val('1');
+            $('#pay_type_modal').modal('show');
+        });
+
+        // Edit button click
+        $(document).on('click', '.type_edit_btn', function() {
+            const id = $(this).parent().attr('idkey');
+            const rowData = payTypeTable.rows().data().toArray().find(row => row.id == id);
+            
+            if (rowData) {
+                $('#modal_title').text('Edit Pay Type');
+                $('#type_id').val(rowData.id);
+                $('#type_code').val(rowData.type_code);
+                $('#type_name').val(rowData.type_name);
+                $('#description').val(rowData.description);
+                $('#is_service').val(rowData.is_service);
+                $('#is_product').val(rowData.is_product);
+                $('#is_subscription').val(rowData.is_subscription);
+                $('#status').val(rowData.status);
+                
+                $('#pay_type_modal').modal('show');
+            }
+        });
+
+        // Save button click
+        $('#save_type_btn').on('click', function() {
+            const id = $('#type_id').val();
+            const url = id ? 
+                '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pay_type/update' : 
+                '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pay_type/create';
+
+            const formData = {
+                id: id,
+                type_code: $('#type_code').val(),
+                type_name: $('#type_name').val(),
+                description: $('#description').val(),
+                is_service: $('#is_service').val(),
+                is_product: $('#is_product').val(),
+                is_subscription: $('#is_subscription').val(),
+                status: $('#status').val()
+            };
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(id ? 'Pay Type updated successfully!' : 'Pay Type created successfully!');
+                        $('#pay_type_modal').modal('hide');
+                        payTypeTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message || 'Operation failed');
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An error occurred. Please try again.');
+                }
+            });
+        });
+
+        // Delete button click
+        $(document).on('click', '.type_delete_btn', function() {
+            const id = $(this).parent().attr('idkey');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pay_type/delete',
+                        method: 'POST',
+                        data: { id: id },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                toastr.success('Pay Type deleted successfully!');
+                                payTypeTable.ajax.reload();
+                            } else {
+                                toastr.error(response.message || 'Delete failed');
+                            }
+                        },
+                        error: function() {
+                            toastr.error('An error occurred. Please try again.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

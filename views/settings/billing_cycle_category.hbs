@@ -1,0 +1,235 @@
+<div class="row my-3 p-10 bg-white border rounded">
+    <div>
+        <h3>Billing Cycle Categories</h3>
+    </div>
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
+        <div class="d-flex justify-content-between gap-3 align-items-center w-100">
+            <div class="input-group" style="width: 250px;">
+                <input type="text" class="form-control" id="category_search_input" placeholder="Search...">
+            </div>
+            <button type="button" class="btn btn-primary" id="add_category_btn">
+                <i class="fas fa-plus"></i> Add New
+            </button>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table" id="billing_cycle_category_tb">
+                <thead>
+                    <th>Category Code</th>
+                    <th>Category Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{!-- Add/Edit Modal --}}
+<div class="modal fade" id="billing_cycle_category_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal_title">Add Billing Cycle Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="category_id" name="id">
+                    {{!-- Category Code --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Category Code <span class="text-danger">*</span></h6>
+                            <input id="category_code" class="form-control" type="text" required/>
+                        </div>
+                    </div>
+                    {{!-- Category Name --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Category Name <span class="text-danger">*</span></h6>
+                            <input id="category_name" class="form-control" type="text" required/>
+                        </div>
+                    </div>
+                    {{!-- Description --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Description</h6>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                    {{!-- Status --}}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <h6>Status <span class="text-danger">*</span></h6>
+                            <select class="form-control" id="status" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save_category_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        let billingCycleCategoryTable = $('#billing_cycle_category_tb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "searching": true,
+            "dom": 'lrtip',
+            "ajax": {
+                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/billing_cycle_cate/read",
+                "type": "POST",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { data: 'category_code' },
+                { data: 'category_name' },
+                { 
+                    data: 'description',
+                    render: function(data, type, row) {
+                        return data || 'N/A';
+                    }
+                },
+                { 
+                    data: 'status',
+                    render: function(data, type, row) {
+                        const statusClass = data === 1 ? 'success' : 'danger';
+                        return `<span class="badge badge-${statusClass}">${data === 1 ? 'Active' : 'Inactive'}</span>`;
+                    }
+                },
+                { 
+                    data: 'id',
+                    render: function(data, type, row) {
+                        return `<div idkey="${data}">
+                                    <span class="btn btn-icon btn-sm btn-light-primary category_edit_btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                    <span class="btn btn-icon btn-sm btn-light-danger category_delete_btn" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                </div>`;
+                    }
+                }
+            ]
+        });
+
+        // Custom search input
+        $('#category_search_input').on('keyup', function() {
+            billingCycleCategoryTable.search(this.value).draw();
+        });
+
+        // Add new button click
+        $('#add_category_btn').on('click', function() {
+            $('#modal_title').text('Add Billing Cycle Category');
+            $('#category_id').val('');
+            $('#category_code').val('');
+            $('#category_name').val('');
+            $('#description').val('');
+            $('#status').val('ACTIVE');
+            $('#billing_cycle_category_modal').modal('show');
+        });
+
+        // Edit button click
+        $(document).on('click', '.category_edit_btn', function() {
+            const id = $(this).parent().attr('idkey');
+            const rowData = billingCycleCategoryTable.rows().data().toArray().find(row => row.id == id);
+            
+            if (rowData) {
+                $('#modal_title').text('Edit Billing Cycle Category');
+                $('#category_id').val(rowData.id);
+                $('#category_code').val(rowData.category_code);
+                $('#category_name').val(rowData.category_name);
+                $('#description').val(rowData.description);
+                $('#status').val(rowData.status);
+                
+                $('#billing_cycle_category_modal').modal('show');
+            }
+        });
+
+        // Save button click
+        $('#save_category_btn').on('click', function() {
+            const id = $('#category_id').val();
+            const url = id ? 
+                '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/billing_cycle_cate/update' : 
+                '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/billing_cycle_cate/create';
+
+            const formData = {
+                id: id,
+                category_code: $('#category_code').val(),
+                category_name: $('#category_name').val(),
+                description: $('#description').val(),
+                status: $('#status').val()
+            };
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(id ? 'Category updated successfully!' : 'Category created successfully!');
+                        $('#billing_cycle_category_modal').modal('hide');
+                        billingCycleCategoryTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message || 'Operation failed');
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An error occurred. Please try again.');
+                }
+            });
+        });
+
+        // Delete button click
+        $(document).on('click', '.category_delete_btn', function() {
+            const id = $(this).parent().attr('idkey');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/billing_cycle_cate/delete',
+                        method: 'POST',
+                        data: { id: id },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                toastr.success('Category deleted successfully!');
+                                billingCycleCategoryTable.ajax.reload();
+                            } else {
+                                toastr.error(response.message || 'Delete failed');
+                            }
+                        },
+                        error: function() {
+                            toastr.error('An error occurred. Please try again.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

@@ -6,3 +6,4 @@ yarn-error.log
 /package-lock.json
 .DS_Store
 /public/assets/images/pq
+/public/assets/images/product_service

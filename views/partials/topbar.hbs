@@ -11,47 +11,73 @@
                             <i class="fa flaticon2-settings"></i>
                         </div>
                     </div>
-                    <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right">
+                    <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right" style="width: 210px !important;">
                         <ul class="navi navi-hover py-4">
+                            {{!-- General Setting --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/general" class="navi-link">
-                                    <span class="">General Setting</span>
+                                    <span class=""><i class="fas fa-sliders-h mr-2"></i>General Setting</span>
                                 </a>
                             </li>
+                            {{!-- Education Category --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/edu_cate" class="navi-link">
-                                    <span class="">Education Category</span>
+                                    <span class=""><i class="fas fa-graduation-cap mr-2"></i>Education Category</span>
                                 </a>
                             </li>
+                            {{!-- Product Category --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/product_cate" class="navi-link">
-                                    <span class="">Product Category</span>
+                                    <span class=""><i class="fas fa-boxes mr-2"></i>Product Category</span>
                                 </a>
                             </li>
+                            {{!-- Pay Type --}}
+                            <li class="navi-item">
+                                <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pay_type" class="navi-link">
+                                    <span class=""><i class="fas fa-money-bill-wave mr-2"></i>Pay Type</span>
+                                </a>
+                            </li>
+                            {{!-- Payment Cycle --}}
+                            <li class="navi-item">
+                                <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/payment_cycle" class="navi-link">
+                                    <span class=""><i class="fas fa-sync-alt mr-2"></i>Payment Cycle</span>
+                                </a>
+                            </li>
+                            {{!-- Billing Cycle Category --}}
+                            <li class="navi-item">
+                                <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/billing_cycle_cate" class="navi-link">
+                                    <span class=""><i class="fas fa-file-invoice-dollar mr-2"></i>Billing Cycle Category</span>
+                                </a>
+                            </li>
+                            {{!-- Survey Settings --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/survey" class="navi-link">
-                                    <span class="">Survey Settings</span>
+                                    <span class=""><i class="fas fa-clipboard-list mr-2"></i>Survey Settings</span>
                                 </a>
                             </li>
+                            {{!-- PQ Settings --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/pqsetting" class="navi-link">
-                                    <span class="">PQ Settings</span>
+                                    <span class=""><i class="fas fa-cogs mr-2"></i>PQ Settings</span>
                                 </a>
                             </li>
+                            {{!-- Security Question --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/squestion" class="navi-link">
-                                    <span class="">Security Question</span>
+                                    <span class=""><i class="fas fa-shield-alt mr-2"></i>Security Question</span>
                                 </a>
                             </li>
                             <hr>
+                            {{!-- Roles --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/role" class="navi-link">
-                                    <span class="">Roles</span>
+                                    <span class=""><i class="fas fa-user-tag mr-2"></i>Roles</span>
                                 </a>
                             </li>
+                            {{!-- Permissions --}}
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/setting/permission" class="navi-link">
-                                    <span class="">Permissions</span>
+                                    <span class=""><i class="fas fa-key mr-2"></i>Permissions</span>
                                 </a>
                             </li>
                         </ul>
@@ -70,7 +96,7 @@
                             <li class="navi-item">
                                 <a href="{{env.HOST_URL}}{{env.PREFIX_URL}}/logout" class="navi-link"
                                     onclick="localStorage.setItem('once_logged_in','false');">
-                                    <span class="">Log Out</span>
+                                    <span class=""><i class="fas fa-sign-out-alt mr-2"></i>Log Out</span>
                                 </a>
                             </li>
                         </ul>

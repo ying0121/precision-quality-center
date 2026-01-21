@@ -32,6 +32,9 @@ const generalRoutes = require("./settings/generalRoutes");
 const roleRoutes = require('./settings/roleRoutes');
 const permissionRoutes = require('./settings/permissionRoutes');
 const productCategoryRoutes = require('./settings/productCategoryRoutes');
+const billingCycleCategoryRoutes = require('./settings/billingCycleCategoryRoutes');
+const paymentCycleRoutes = require('./settings/paymentCycleRoutes');
+const payTypeRoutes = require('./settings/payTypeRoutes');
 
 const apiRoutes = require('./apiRoutes');
 
@@ -72,6 +75,9 @@ router.use('/setting/general', isAuth, generalRoutes);
 router.use('/setting/role', isAuth, roleRoutes);
 router.use('/setting/permission', isAuth, permissionRoutes);
 router.use('/setting/product_cate', isAuth, productCategoryRoutes);
+router.use('/setting/billing_cycle_cate', isAuth, billingCycleCategoryRoutes);
+router.use('/setting/payment_cycle', isAuth, paymentCycleRoutes);
+router.use('/setting/pay_type', isAuth, payTypeRoutes);
 
 router.use('/api', apiRoutes);
 
