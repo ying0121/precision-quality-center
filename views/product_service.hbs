@@ -174,13 +174,13 @@
                     <input type="hidden" id="product_service_id" name="id">
                     {{!-- Category --}}
                     <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Category <span class="text-danger">*</span></label>
+                        <label class="col-lg-3 col-form-label">Categories <span class="text-danger">*</span></label>
                         <div class="col-lg-9">
-                            <select class="form-control" id="category_id" name="category_id" required>
+                            <select class="form-control" id="category_ids" name="category_ids" multiple required>
                             </select>
                         </div>
                     </div>
-                    {{!-- Category --}}
+                    {{!-- Product/Service Name --}}
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label">Name <span class="text-danger">*</span></label>
                         <div class="col-lg-9">
@@ -266,6 +266,14 @@
             height: 150
         });
         
+        // Initialize Select2 for categories
+        $('#category_ids').select2({
+            placeholder: 'Select categories',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#product_service_modal')
+        });
+        
         // Load categories
         $.ajax({
             url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/read-categories',
@@ -274,7 +282,7 @@
             success: function(response) {
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function(category) {
-                        $('#category_id').append(`<option value="${category.id}">${category.name}</option>`);
+                        $('#category_ids').append(`<option value="${category.id}">${category.name}</option>`);
                     });
                 }
             },
@@ -321,9 +329,9 @@
                     }
                 },
                 { 
-                    data: 'product_category',
+                    data: 'categories',
                     render: function(data, type, row) {
-                        return data ? data.name : 'N/A';
+                        return data ? data : 'N/A';
                     }
                 },
                 { data: 'name' },
@@ -340,9 +348,9 @@
                     }
                 },
                 {
-                    data: 'product_category',
+                    data: 'product_categories',
                     render: function(data, type, row) {
-                        return data.type === 'product' ? 'Product' : 'Service';
+                        return data ? `<span class="badge badge-${data[0].type === 'product' ? 'primary' : 'success'}">${data[0].type === 'product' ? 'Product' : 'Service'}</span>` : 'N/A';
                     }
                 },
                 { 
@@ -499,6 +507,8 @@
             $('#modal_title').text('Add Product/Service');
             $('#product_service_form')[0].reset();
             $('#product_service_id').val('');
+            $('#category_ids').val(null).trigger('change');
+            $('#description').summernote("code", "");
             $('#product_service_modal').modal('show');
         });
 
@@ -524,7 +534,7 @@
                     $('#stock_quantity').val(result.stock_quantity);
                     $('#usage_limit').val(result.usage_limit);
                     $('#status').val(result.status);
-                    $('#category_id').val(result.category_id);
+                    $('#category_ids').val(result.category_ids.split(",")).trigger('change');
                     
                     $('#product_service_modal').modal('show');
                 },
@@ -542,6 +552,12 @@
                 return;
             }
 
+            const categoryIds = $('#category_ids').val();
+            if (!categoryIds || categoryIds.length === 0) {
+                toastr.error('Please select at least one category');
+                return;
+            }
+
             const id = $('#product_service_id').val();
             const url = id ? 
                 '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/update' : 
@@ -549,7 +565,7 @@
 
             const formData = {
                 id: id,
-                category_id: $('#category_id').val(),
+                category_ids: categoryIds.join(","),
                 name: $('#name').val(),
                 description: $('#description').summernote("code"),
                 price: $('#price').val(),

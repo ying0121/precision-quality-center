@@ -7,6 +7,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+const { fn, col, literal } = require('sequelize');
+
 const permission_name = ["PRODUCT_SERVICES"];
 
 // Configure multer for product service images
@@ -56,8 +58,26 @@ exports.readProductServices = async (req, res, next) => {
     if (!_status) return res.status(403).send("")
 
     try {
-        const productServices = await ProductService.findAll({ include: [ProductCategory], order: [['name', 'ASC']] });
-        res.status(200).json({ data: productServices });
+        const products = await ProductService.findAll({
+            attributes: {
+                include: [
+                    [
+                        fn('GROUP_CONCAT', col('product_categories.name')),
+                        'categories'
+                    ]
+                ]
+            },
+            include: [{
+                model: ProductCategory,
+                attributes: ['type'],
+                required: false,
+                on: literal('FIND_IN_SET(product_categories.id, product_services.category_ids)')
+            }],
+            group: ['product_services.id'],
+            order: [['name', 'ASC']]
+        });
+        
+        res.status(200).json({ data: products });
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -71,10 +91,9 @@ exports.createProductService = async (req, res, next) => {
 
     try {
         const newRecord = ProductService.build({
-            category_id: req.body.category_id,
+            category_ids: req.body.category_ids,
             name: req.body.name,
             description: req.body.description,
-            image: null,
             price: req.body.price,
             billing_type: req.body.billing_type,
             recurring_interval: req.body.recurring_interval,
@@ -98,7 +117,7 @@ exports.updateProductService = async (req, res, next) => {
 
     try {
         const updates = {
-            category_id: req.body.category_id,
+            category_ids: req.body.category_ids,
             name: req.body.name,
             description: req.body.description,
             price: req.body.price,
@@ -244,7 +263,19 @@ exports.chosenProductService = async (req, res, next) => {
 
     try {
         const productService = await ProductService.findOne({ where: { id: req.body.id } });
-        res.status(200).json({ data: productService });
+        const productData = productService.toJSON();
+        
+        // Fetch categories
+        if (productData.category_ids && productData.category_ids.length > 0) {
+            const categories = await ProductCategory.findAll({
+                where: { id: productData.category_ids }
+            });
+            productData.categories = categories;
+        } else {
+            productData.categories = [];
+        }
+        
+        res.status(200).json({ data: productData });
     } catch (error) {
         res.status(500).send(error.message);
     }
