@@ -49,7 +49,6 @@
                         <div class="form-group">
                             <h6>Category <span class="text-danger">*</span></h6>
                             <select class="form-control" id="category_id" required>
-                                <option value="">Select Category</option>
                             </select>
                         </div>
                     </div>
@@ -132,9 +131,11 @@
             dataType: 'json',
             success: function(response) {
                 if (response.data && response.data.length > 0) {
+                    let html = ""
                     response.data.forEach(function(category) {
-                        $('#category_id').append(`<option value="${category.id}">${category.category_name}</option>`);
+                        html += `<option value="${category.id}">${category.category_name}</option>`
                     });
+                    $('#category_id').html(html);
                 }
             }
         });

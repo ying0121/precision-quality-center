@@ -39,7 +39,7 @@ exports.readBillingCycleCategories = async (req, res, next) => {
 
     try {
         const categories = await BillingCycleCategory.findAll({ 
-            where: { status: 'ACTIVE' },
+            where: { status: 1 },
             order: [['category_name', 'ASC']] 
         });
         res.status(200).json({ data: categories });
