@@ -19,18 +19,6 @@ const PayType = sequelize.define('pay_types', {
   description: {
     type: DataTypes.STRING(255),
   },
-  is_service: {
-    type: DataTypes.TINYINT(1),
-    defaultValue: 0
-  },
-  is_product: {
-    type: DataTypes.TINYINT(1),
-    defaultValue: 0
-  },
-  is_subscription: {
-    type: DataTypes.TINYINT(1),
-    defaultValue: 0
-  },
   status: {
     type: DataTypes.TINYINT,
     defaultValue: 1

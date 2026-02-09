@@ -38,9 +38,6 @@ exports.createPayType = async (req, res, next) => {
             type_code: req.body.type_code,
             type_name: req.body.type_name,
             description: req.body.description,
-            is_service: req.body.is_service || 0,
-            is_product: req.body.is_product || 0,
-            is_subscription: req.body.is_subscription || 0,
             status: req.body.status,
         });
 
@@ -62,9 +59,6 @@ exports.updatePayType = async (req, res, next) => {
             type_code: req.body.type_code,
             type_name: req.body.type_name,
             description: req.body.description,
-            is_service: req.body.is_service || 0,
-            is_product: req.body.is_product || 0,
-            is_subscription: req.body.is_subscription || 0,
             status: req.body.status,
         };
         

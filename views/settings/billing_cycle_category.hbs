@@ -68,7 +68,7 @@
                         <div class="form-group">
                             <h6>Status <span class="text-danger">*</span></h6>
                             <select class="form-control" id="status" required>
-                                <option value="1">Active</option>
+                                <option value="1" selected>Active</option>
                                 <option value="0">Inactive</option>
                             </select>
                         </div>
@@ -142,7 +142,7 @@
             $('#category_code').val('');
             $('#category_name').val('');
             $('#description').val('');
-            $('#status').val('ACTIVE');
+            $('#status').val('1');
             $('#billing_cycle_category_modal').modal('show');
         });
 

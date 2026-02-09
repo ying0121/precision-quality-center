@@ -19,9 +19,6 @@
                     <th>Type Code</th>
                     <th>Type Name</th>
                     <th>Description</th>
-                    <th>Service</th>
-                    <th>Product</th>
-                    <th>Subscription</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </thead>
@@ -64,36 +61,6 @@
                         <div class="form-group">
                             <h6>Description</h6>
                             <textarea class="form-control" id="description" rows="3" placeholder="Description"></textarea>
-                        </div>
-                    </div>
-                    {{!-- Is Service --}}
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <h6>Is Service</h6>
-                            <select class="form-control" id="is_service">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{!-- Is Product --}}
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <h6>Is Product</h6>
-                            <select class="form-control" id="is_product">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{!-- Is Subscription --}}
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <h6>Is Subscription</h6>
-                            <select class="form-control" id="is_subscription">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
-                            </select>
                         </div>
                     </div>
                     {{!-- Status --}}
@@ -141,24 +108,6 @@
                     }
                 },
                 { 
-                    data: 'is_service',
-                    render: function(data, type, row) {
-                        return data == 1 ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>';
-                    }
-                },
-                { 
-                    data: 'is_product',
-                    render: function(data, type, row) {
-                        return data == 1 ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>';
-                    }
-                },
-                { 
-                    data: 'is_subscription',
-                    render: function(data, type, row) {
-                        return data == 1 ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>';
-                    }
-                },
-                { 
                     data: 'status',
                     render: function(data, type, row) {
                         const statusClass = data == 1 ? 'success' : 'danger';
@@ -194,9 +143,6 @@
             $('#type_code').val('');
             $('#type_name').val('');
             $('#description').val('');
-            $('#is_service').val('0');
-            $('#is_product').val('0');
-            $('#is_subscription').val('0');
             $('#status').val('1');
             $('#pay_type_modal').modal('show');
         });
@@ -212,9 +158,6 @@
                 $('#type_code').val(rowData.type_code);
                 $('#type_name').val(rowData.type_name);
                 $('#description').val(rowData.description);
-                $('#is_service').val(rowData.is_service);
-                $('#is_product').val(rowData.is_product);
-                $('#is_subscription').val(rowData.is_subscription);
                 $('#status').val(rowData.status);
                 
                 $('#pay_type_modal').modal('show');
@@ -233,9 +176,6 @@
                 type_code: $('#type_code').val(),
                 type_name: $('#type_name').val(),
                 description: $('#description').val(),
-                is_service: $('#is_service').val(),
-                is_product: $('#is_product').val(),
-                is_subscription: $('#is_subscription').val(),
                 status: $('#status').val()
             };
 

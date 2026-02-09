@@ -35,6 +35,7 @@ const productCategoryRoutes = require('./settings/productCategoryRoutes');
 const billingCycleCategoryRoutes = require('./settings/billingCycleCategoryRoutes');
 const paymentCycleRoutes = require('./settings/paymentCycleRoutes');
 const payTypeRoutes = require('./settings/payTypeRoutes');
+const productServiceSettingRoutes = require('./settings/productServiceRoutes');
 
 const apiRoutes = require('./apiRoutes');
 
@@ -78,6 +79,7 @@ router.use('/setting/product_cate', isAuth, productCategoryRoutes);
 router.use('/setting/billing_cycle_cate', isAuth, billingCycleCategoryRoutes);
 router.use('/setting/payment_cycle', isAuth, paymentCycleRoutes);
 router.use('/setting/pay_type', isAuth, payTypeRoutes);
+router.use('/setting/product_service', isAuth, productServiceSettingRoutes);
 
 router.use('/api', apiRoutes);
 
