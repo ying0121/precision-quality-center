@@ -1,282 +1,215 @@
-
-const ProductService = require('../models/ProductService');
-const ProductCategory = require('../models/settings/ProductCategory');
-const util_permission = require('../utilities/permission');
-const util_upload = require('../utilities/upload');
-const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const multer = require('multer');
+const ProductService = require('../models/ProductService');
+const ProductCategory = require('../models/settings/ProductCategory');
+const PayType = require('../models/settings/PayType');
+const PaymentCycle = require('../models/settings/PaymentCycle');
+const BillingCycleCategory = require('../models/settings/BillingCycleCategory');
+const util_permission = require('../utilities/permission');
 
-const { fn, col, literal } = require('sequelize');
+const permission_name = ['PRODUCT_SERVICES'];
 
-const permission_name = ["PRODUCT_SERVICES"];
+const IMAGES_DIR = './public/assets/images/product_service';
+const VIDEOS_DIR = './public/assets/videos/product_service';
+const IMAGES_PATH_PREFIX = 'assets/images/product_service';
+const VIDEOS_PATH_PREFIX = 'assets/videos/product_service';
 
-// Configure multer for product service images
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const destination = './public/assets/images/product_service';
-        if (!fs.existsSync(destination)) {
-            fs.mkdirSync(destination, { recursive: true });
+        const dir = file.fieldname === 'video' ? VIDEOS_DIR : IMAGES_DIR;
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
         }
-        cb(null, destination);
+        cb(null, dir);
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const extension = path.extname(file.originalname);
-        cb(null, uniqueSuffix + extension);
+        const ext = path.extname(file.originalname) || (file.mimetype && file.mimetype.startsWith('video/') ? '.mp4' : '.jpg');
+        cb(null, uniqueSuffix + ext);
     }
 });
 
-const upload = multer({ 
-    storage: storage,
-    fileFilter: function (req, file, cb) {
-        // Accept images only
-        if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-            return cb(new Error('Only image files are allowed!'), false);
+const fileFilter = function (req, file, cb) {
+    if (file.fieldname === 'video') {
+        if (!file.mimetype || !file.mimetype.startsWith('video/')) {
+            return cb(new Error('Only video files are allowed'), false);
         }
-        cb(null, true);
-    },
-    limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        return cb(null, true);
     }
-}).single('image');
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+        return cb(new Error('Only image files are allowed'), false);
+    }
+    cb(null, true);
+};
+
+const uploadProductServiceFiles = multer({
+    storage,
+    fileFilter,
+    limits: {
+        fileSize: 100 * 1024 * 1024  // 100MB max per file (for video)
+    }
+}).fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'video', maxCount: 1 }
+]);
+
+exports.uploadProductServiceFiles = uploadProductServiceFiles;
 
 exports.productServicePage = async (req, res, next) => {
-    // permission
-    const _permission = 2 * 3 * 5 * 7; // create && read && update && delete
+    const _permission = 2 * 3 * 5 * 7;
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-    if (!_status) return res.render('403')
-
+    if (!_status) return res.render('403');
     res.render('product_service');
 };
 
 exports.readProductServices = async (req, res, next) => {
-    // permission
-    const _permission = 3; // read
+    const _permission = 3;
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-
-    if (!_status) return res.status(403).send("")
+    if (!_status) return res.status(403).send('');
 
     try {
-        const products = await ProductService.findAll({
-            attributes: {
-                include: [
-                    [
-                        fn('GROUP_CONCAT', col('product_categories.name')),
-                        'categories'
-                    ]
-                ]
-            },
-            include: [{
-                model: ProductCategory,
-                attributes: ['type'],
-                required: false,
-                on: literal('FIND_IN_SET(product_categories.id, product_services.category_ids)')
-            }],
-            group: ['product_services.id'],
+        const list = await ProductService.findAll({
+            include: [
+                { model: ProductCategory, attributes: ['id', 'name'], required: false },
+                { model: PayType, attributes: ['id', 'type_name'], required: false },
+                { model: PaymentCycle, attributes: ['id', 'cycle_name'], required: false },
+                { model: BillingCycleCategory, attributes: ['id', 'category_name'], required: false }
+            ],
             order: [['name', 'ASC']]
         });
-        
-        res.status(200).json({ data: products });
+        res.status(200).json({ data: list });
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
+
+function buildImagesString(req) {
+    const existing = (req.body.existing_images || '').split(',').map(s => s.trim()).filter(Boolean);
+    const newFiles = (req.files && req.files.images) ? req.files.images : [];
+    const newPaths = newFiles.map(f => IMAGES_PATH_PREFIX + '/' + f.filename);
+    return existing.concat(newPaths).join(',') || null;
+}
+
+function buildVideoString(req) {
+    if (req.files && req.files.video && req.files.video[0]) {
+        return VIDEOS_PATH_PREFIX + '/' + req.files.video[0].filename;
+    }
+    const existing = (req.body.existing_video || '').trim();
+    return existing || null;
+}
+
+function deleteStoredFile(storedPath) {
+    if (!storedPath || typeof storedPath !== 'string') return;
+    const fullPath = path.join(__dirname, '..', '..', 'public', storedPath.trim());
+    try {
+        if (fs.existsSync(fullPath)) {
+            fs.unlinkSync(fullPath);
+        }
+    } catch (err) {
+        console.error('Error deleting file:', fullPath, err.message);
+    }
+}
+
 exports.createProductService = async (req, res, next) => {
-    // permission
-    const _permission = 2; // create
+    const _permission = 2;
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-
-    if (!_status) return res.status(403).send("")
+    if (!_status) return res.status(403).send('');
 
     try {
-        const newRecord = ProductService.build({
-            category_ids: req.body.category_ids,
+        const imagesStr = buildImagesString(req);
+        const videoStr = buildVideoString(req);
+        await ProductService.create({
+            type: req.body.type,
+            category_id: req.body.category_id,
             name: req.body.name,
-            description: req.body.description,
-            price: req.body.price,
-            billing_type: req.body.billing_type,
-            recurring_interval: req.body.recurring_interval,
-            stock_quantity: req.body.stock_quantity || 0,
-            usage_limit: req.body.usage_limit || 0,
-            status: req.body.status,
+            short_description: req.body.short_description || null,
+            long_description: req.body.long_description || null,
+            base_price: req.body.base_price,
+            currency: req.body.currency || 'USD',
+            is_subscription: req.body.is_subscription === 'true' || req.body.is_subscription === '1',
+            pay_type_id: req.body.pay_type_id || null,
+            payment_cycle_id: req.body.payment_cycle_id || null,
+            billing_cycle_category_id: req.body.billing_cycle_category_id || null,
+            discount_type: req.body.discount_type || 'none',
+            discount_value: req.body.discount_value || 0,
+            tax_required: req.body.tax_required !== 'false' && req.body.tax_required !== '0',
+            status: req.body.status || 'active',
+            images: imagesStr,
+            videos: videoStr
         });
-
-        await newRecord.save();
         res.status(200).json({ status: 'success' });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
     }
 };
+
 exports.updateProductService = async (req, res, next) => {
-    // permission
-    const _permission = 5; // update
+    const _permission = 5;
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-    
-    if (!_status) return res.status(403).send("")
+    if (!_status) return res.status(403).send('');
 
     try {
-        const updates = {
-            category_ids: req.body.category_ids,
-            name: req.body.name,
-            description: req.body.description,
-            price: req.body.price,
-            billing_type: req.body.billing_type,
-            recurring_interval: req.body.recurring_interval,
-            stock_quantity: req.body.stock_quantity || 0,
-            usage_limit: req.body.usage_limit || 0,
-            status: req.body.status,
-        };
-        
-        await ProductService.update(updates, { where: { id: req.body.id } });
+        const imagesStr = buildImagesString(req);
+        const videoStr = buildVideoString(req);
+        const current = await ProductService.findOne({ where: { id: req.body.id } });
+        if (current) {
+            const oldImages = (current.images || '').split(',').map(s => s.trim()).filter(Boolean);
+            const newImagesList = (imagesStr || '').split(',').map(s => s.trim()).filter(Boolean);
+            oldImages.forEach(oldPath => {
+                if (!newImagesList.includes(oldPath)) {
+                    deleteStoredFile(oldPath);
+                }
+            });
+            const oldVideo = (current.videos || '').trim() || null;
+            if (oldVideo && oldVideo !== (videoStr || '').trim()) {
+                deleteStoredFile(oldVideo);
+            }
+        }
+        await ProductService.update(
+            {
+                type: req.body.type,
+                category_id: req.body.category_id,
+                name: req.body.name,
+                short_description: req.body.short_description || null,
+                long_description: req.body.long_description || null,
+                base_price: req.body.base_price,
+                currency: req.body.currency || 'USD',
+                is_subscription: req.body.is_subscription === 'true' || req.body.is_subscription === '1',
+                pay_type_id: req.body.pay_type_id || null,
+                payment_cycle_id: req.body.payment_cycle_id || null,
+                billing_cycle_category_id: req.body.billing_cycle_category_id || null,
+                discount_type: req.body.discount_type || 'none',
+                discount_value: req.body.discount_value || 0,
+                tax_required: req.body.tax_required !== 'false' && req.body.tax_required !== '0',
+                status: req.body.status || 'active',
+                images: imagesStr,
+                videos: videoStr
+            },
+            { where: { id: req.body.id } }
+        );
         res.status(200).json({ status: 'success' });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
     }
 };
+
 exports.deleteProductService = async (req, res, next) => {
-    // permission
-    const _permission = 7; // delete
+    const _permission = 7;
     const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-    
-    if (!_status) return res.status(403).send("")
+    if (!_status) return res.status(403).send('');
 
     try {
+        const current = await ProductService.findOne({ where: { id: req.body.id } });
+        if (current) {
+            const imagePaths = (current.images || '').split(',').map(s => s.trim()).filter(Boolean);
+            imagePaths.forEach(storedPath => deleteStoredFile(storedPath));
+            const videoPath = (current.videos || '').trim();
+            if (videoPath) deleteStoredFile(videoPath);
+        }
         await ProductService.destroy({ where: { id: req.body.id } });
         res.status(200).json({ status: 'success' });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
-    }
-};
-
-exports.uploadImage = async (req, res, next) => {
-    // permission
-    const _permission = 5; // update
-    const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-    
-    if (!_status) return res.status(403).json({ status: 'error', message: 'Permission denied' });
-
-    // Use multer to handle file upload
-    upload(req, res, async function (err) {
-        if (err instanceof multer.MulterError) {
-            // Multer error occurred
-            return res.status(400).json({ status: 'error', message: err.message });
-        } else if (err) {
-            // Unknown error occurred
-            return res.status(500).json({ status: 'error', message: err.message });
-        }
-
-        // Check if file was uploaded
-        if (!req.file) {
-            return res.status(400).json({ status: 'error', message: 'No image file uploaded' });
-        }
-
-        const productId = req.body.id;
-        const destination = './public/assets/images/product_service';
-
-        try {
-            const productService = await ProductService.findOne({ where: { id: productId } });
-            
-            if (!productService) {
-                // Delete uploaded file if product not found
-                fs.unlinkSync(path.join(destination, req.file.filename));
-                return res.status(404).json({ status: 'error', message: 'Product/Service not found' });
-            }
-
-            // Delete old image if exists
-            if (productService.image_url) {
-                try {
-                    await util_upload.deleteOldFile(productService.image_url, destination);
-                } catch (err) {
-                    console.error('Error deleting old image:', err);
-                }
-            }
-
-            // Update with new image
-            await ProductService.update({ image_url: req.file.filename }, { where: { id: productId } });
-            res.status(200).json({ status: 'success', image: req.file.filename });
-        } catch (error) {
-            // Delete uploaded file on error
-            if (req.file) {
-                fs.unlinkSync(path.join(destination, req.file.filename));
-            }
-            res.status(500).json({ status: 'error', message: error.message });
-        }
-    });
-};
-
-exports.deleteImage = async (req, res, next) => {
-    // permission
-    const _permission = 5; // update
-    const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-    
-    if (!_status) return res.status(403).send("")
-
-    const destination = './public/assets/images/product_service';
-    const productId = req.body.id;
-
-    try {
-        const productService = await ProductService.findOne({ where: { id: productId } });
-        
-        if (!productService) {
-            return res.status(404).json({ status: 'error', message: 'Product/Service not found' });
-        }
-
-        // Delete image file if exists
-        if (productService.image_url) {
-            try {
-                await util_upload.deleteOldFile(productService.image_url, destination);
-            } catch (err) {
-                console.error('Error deleting image:', err);
-            }
-        }
-
-        // Update database to remove image reference
-        await ProductService.update({ image_url: null }, { where: { id: productId } });
-        res.status(200).json({ status: 'success' });
-    } catch (error) {
-        res.status(500).json({ status: 'error', message: error.message });
-    }
-};
-
-exports.readCategories = async (req, res, next) => {
-    // permission
-    const _permission = 3; // read
-    const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-
-    if (!_status) return res.status(403).send("")
-
-    try {
-        const categories = await ProductCategory.findAll({ where: { status: 1 }, order: [['name', 'ASC']] });
-        res.status(200).json({ data: categories });
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-};
-
-exports.chosenProductService = async (req, res, next) => {
-    // permission
-    const _permission = 3; // read
-    const _status = await util_permission.checkPermission(req.session.user.role_id, permission_name[0], _permission);
-
-    if (!_status) return res.status(403).send("")
-
-    try {
-        const productService = await ProductService.findOne({ where: { id: req.body.id } });
-        const productData = productService.toJSON();
-        
-        // Fetch categories
-        if (productData.category_ids && productData.category_ids.length > 0) {
-            const categories = await ProductCategory.findAll({
-                where: { id: productData.category_ids }
-            });
-            productData.categories = categories;
-        } else {
-            productData.categories = [];
-        }
-        
-        res.status(200).json({ data: productData });
-    } catch (error) {
-        res.status(500).send(error.message);
     }
 };

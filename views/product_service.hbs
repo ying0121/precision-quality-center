@@ -1,90 +1,6 @@
-<style>
-    .static-body {
-        border-radius: 6px;
-        box-shadow: 2px 2px 4px #00000020;
-        transition: all 200ms ease-out;
-    }
-
-    .static-body:hover {
-        box-shadow: 4px 4px 8px #00000040;
-        transition: all 200ms ease-out;
-        background-color: #FFFFFF90 !important;
-    }
-
-    .image-container {
-        position: relative;
-        display: inline-block;
-        width: 120px;
-        height: 120px;
-    }
-
-    .image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 5px;
-    }
-
-    .image-container .image-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .image-container:hover .image-overlay {
-        opacity: 1;
-    }
-
-    .no-image-container {
-        position: relative;
-        display: inline-block;
-        width: 120px;
-        height: 120px;
-        background-color: #f5f5f5;
-        border: 2px dashed #ddd;
-        border-radius: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .no-image-container .upload-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 123, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .no-image-container:hover .upload-overlay {
-        opacity: 1;
-    }
-
-    .no-image-container .default-icon {
-        font-size: 32px;
-        color: #ccc;
-    }
-</style>
-
 <div class="row my-3 p-10 bg-white border rounded">
     <div>
-        <h3>Product & Service List</h3>
+        <h3>Product / Service</h3>
     </div>
     <div class="col-12 mb-4 d-flex justify-content-between align-items-center my-5">
         <div class="d-flex justify-content-between gap-3 align-items-center w-100">
@@ -100,15 +16,13 @@
         <div class="table-responsive">
             <table class="table" id="product_service_tb">
                 <thead>
-                    <th>Image</th>
-                    <th>Category</th>
                     <th>Name</th>
-                    <th>Price</th>
-                    <th>Cycle</th>
                     <th>Type</th>
-                    <th>Billing Type</th>
-                    <th>Date Created</th>
+                    <th>Category</th>
+                    <th>Base Price</th>
                     <th>Status</th>
+                    <th>Images</th>
+                    <th>Video</th>
                     <th>Actions</th>
                 </thead>
                 <tbody>
@@ -118,138 +32,176 @@
     </div>
 </div>
 
-{{!-- Upload Image Modal --}}
-<div class="modal fade" id="upload_image_modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Upload Product Image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="upload_image_form" enctype="multipart/form-data">
-                    <input type="hidden" id="upload_product_id" name="product_id">
-                    
-                    <div class="form-group">
-                        <label>Select Image (Max 320×320px)</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="product_image_input" name="image" accept="image/*" required>
-                            <label class="custom-file-label" for="product_image_input">Choose image...</label>
-                        </div>
-                        <small class="form-text text-muted">Recommended size: 320×320 pixels</small>
-                        
-                        <small id="upload_size_warning" class="form-text text-danger" style="display: none;">
-                            <i class="fas fa-exclamation-circle"></i> 
-                            <span id="upload_warning_message"></span>
-                        </small>
-                        <small id="upload_size_success" class="form-text text-success" style="display: none;">
-                            <i class="fas fa-check-circle"></i> 
-                            <span id="upload_success_message"></span>
-                        </small>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="upload_image_btn">Upload</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 {{!-- Add/Edit Modal --}}
 <div class="modal fade" id="product_service_modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content position-relative">
+            <div id="ps_save_loader" class="position-absolute d-none flex-column align-items-center justify-content-center" style="top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.85);z-index:10;">
+                <div class="spinner-border text-primary mb-2" style="width:3rem;height:3rem;" role="status"></div>
+                <span class="text-dark font-weight-bold">Saving...</span>
+                <span class="small text-muted">Uploading images and video may take a moment</span>
+            </div>
             <div class="modal-header">
-                <h5 class="modal-title" id="modal_title">Add Product/Service</h5>
+                <h5 class="modal-title" id="product_service_modal_title">Add Product / Service</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="product_service_form">
-                    <input type="hidden" id="product_service_id" name="id">
-                    {{!-- Category --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Categories <span class="text-danger">*</span></label>
-                        <div class="col-lg-9">
-                            <select class="form-control" id="category_ids" name="category_ids" multiple required>
-                            </select>
+                <input type="hidden" id="product_service_id" name="id">
+                <div class="row">
+                    {{!-- Left: General Information --}}
+                    <div class="col-md-7">
+                        <div class="w-100 d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="font-weight-bold text-nowrap m-0 p-0">General Information</h5>
+                            <hr class="w-100 ml-5">
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <h6>Type <span class="text-danger">*</span></h6>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <label class="mb-0 d-flex align-items-center fs-5"><input type="radio" name="ps_type" value="product" checked class="mr-2" style="width: 24px; height: 24px;"> Product</label>
+                                        <label class="mb-0 d-flex align-items-center mx-4 fs-5"><input type="radio" name="ps_type" value="service" class="mr-2" style="width: 24px; height: 24px;"> Service</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6>Category <span class="text-danger">*</span></h6>
+                                    <select class="form-control" id="ps_category_id" required>
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6>Name <span class="text-danger">*</span></h6>
+                                    <input id="ps_name" class="form-control" type="text" placeholder="Enter Product or Service Name" required/>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <h6>Short Description</h6>
+                                    <textarea class="form-control" id="ps_short_description" rows="2" placeholder="Brief summary..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <h6>Long Description</h6>
+                                    <textarea class="form-control" id="ps_long_description" rows="4" placeholder="Detailed description..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6>Base Price <span class="text-danger">*</span></h6>
+                                    <div class="input-group">
+                                        <input id="ps_base_price" class="form-control" type="number" step="0.01" min="0" value="0.00" required/>
+                                        <div class="input-group-append">
+                                            <select class="form-control" id="ps_currency" style="max-width: 80px;">
+                                                <option value="USD">USD</option>
+                                                <option value="EUR">EUR</option>
+                                                <option value="GBP">GBP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6>Discount</h6>
+                                    <div class="input-group">
+                                        <select class="form-control" id="ps_discount_type" style="max-width: 120px;">
+                                            <option value="none">None</option>
+                                            <option value="percentage">Percentage</option>
+                                            <option value="fixed">Fixed</option>
+                                        </select>
+                                        <input id="ps_discount_value" class="form-control" type="number" step="0.01" min="0" value="0" placeholder="0% / 0.00"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <div class="w-100 d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="font-weight-bold text-nowrap m-0 p-0">Payment Options</h6>
+                                    <hr class="w-100 ml-5">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h6>Pay Type</h6>
+                                    <select class="form-control" id="ps_pay_type_id">
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h6>Payment Cycle</h6>
+                                    <select class="form-control" id="ps_payment_cycle_id">
+                                        <option value="">Select Cycle</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h6>Billing Category</h6>
+                                    <select class="form-control" id="ps_billing_cycle_category_id">
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h6>Status</h6>
+                                    <select class="form-control" id="ps_status">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="d-flex align-items-center mt-9">
+                                        <input type="checkbox" class="mr-2" id="ps_tax_required" checked style="width: 24px; height: 24px;">
+                                        <label class="mb-0" for="ps_tax_required">Tax Required</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    {{!-- Product/Service Name --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Name <span class="text-danger">*</span></label>
-                        <div class="col-lg-9">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Product/Service Name" required>
+                    {{!-- Right: Media Uploads --}}
+                    <div class="col-md-5 border-left pl-md-4">
+                        <div class="w-100 d-flex justify-content-between align-items-center mb-5">
+                            <h5 class="font-weight-bold text-nowrap m-0 p-0">Media Uploads</h5>
+                            <hr class="w-100 ml-5">
+                        </div>
+                        <div class="form-group">
+                            <div class="w-100 d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="font-weight-bold text-nowrap m-0 p-0">Images (Optional)</h6>
+                                <hr class="w-100 ml-5">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm mb-2" id="ps_select_images_btn"><i class="fas fa-images mr-1"></i> Select Images</button>
+                            <input type="file" id="ps_images_input" class="d-none" accept="image/*" multiple>
+                            <div class="small text-muted mb-1">Set as Primary</div>
+                            <div id="ps_images_preview" class="d-flex flex-wrap align-items-start" style="gap: 10px;">
+                                {{!-- Thumbnails with remove --}}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="w-100 d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="font-weight-bold text-nowrap m-0 p-0">Video (Optional)</h6>
+                                <hr class="w-100 ml-5">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm mb-2 mr-2" id="ps_upload_video_btn"><i class="fas fa-upload mr-1"></i> Upload Video</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mb-2" id="ps_clear_video_btn"><i class="fas fa-times mr-1"></i> Clear Video</button>
+                            <input type="file" id="ps_video_input" class="d-none" accept="video/*">
+                            <div id="ps_video_preview">
+                                {{!-- Video preview --}}
+                            </div>
                         </div>
                     </div>
-                    {{!-- Description --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Description</label>
-                        <div class="col-lg-9">
-                            <div class="summernote" id="description"></div>
-                        </div>
-                    </div>
-                    {{!-- Price --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Price <span class="text-danger">*</span></label>
-                        <div class="col-lg-9">
-                            <input type="number" step="0.01" class="form-control" id="price" name="price" placeholder="0.00" required>
-                        </div>
-                    </div>
-                    {{!-- Billing Type --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Billing Type <span class="text-danger">*</span></label>
-                        <div class="col-lg-9">
-                            <select class="form-control" id="billing_type" name="billing_type" required>
-                                <option value="one_time">One Time</option>
-                                <option value="recurring">Recurring</option>
-                                <option value="usage_based">Usage Based</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{!-- Recurring Interval --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Recurring Interval</label>
-                        <div class="col-lg-9">
-                            <select class="form-control" id="recurring_interval" name="recurring_interval">
-                                <option value="none">None</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="quarterly">Quarterly</option>
-                                <option value="semi_annual">Semi-Annual</option>
-                                <option value="annual">Annual</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{!-- Stock Quantity --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Stock Quantity</label>
-                        <div class="col-lg-9">
-                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" placeholder="0">
-                        </div>
-                    </div>
-                    {{!-- Usage Limit --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Usage Limit</label>
-                        <div class="col-lg-9">
-                            <input type="number" class="form-control" id="usage_limit" name="usage_limit" placeholder="0">
-                        </div>
-                    </div>
-                    {{!-- Status --}}
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">Status <span class="text-danger">*</span></label>
-                        <div class="col-lg-9">
-                            <select class="form-control" id="status" name="status" required>
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -259,327 +211,348 @@
     </div>
 </div>
 
+{{!-- Image slider modal (content only, no header/footer) --}}
+<div class="modal fade" id="ps_image_slider_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content border-0 bg-transparent">
+            <button type="button" class="close position-absolute text-white mr-2 mt-2" style="right:0;top:0;opacity:0.9;text-shadow:0 0 4px #000;z-index:11;" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div id="ps_image_slider" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" id="ps_image_slider_inner"></div>
+                <a class="carousel-control-prev" href="#ps_image_slider" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#ps_image_slider" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- Video preview modal (content only, no header/footer) --}}
+<div class="modal fade" id="ps_video_preview_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content border-0 bg-dark">
+            <button type="button" class="close position-absolute text-white z-index-10 mr-2 mt-2" style="right:0;top:0;opacity:0.9;z-index:11;" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <video id="ps_video_preview_player" controls style="width:100%;max-height:90vh;" class="d-block"></video>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {
-        $('#description').summernote({
-            tabsize: 1,
-            height: 150
-        });
-        
-        // Initialize Select2 for categories
-        $('#category_ids').select2({
-            placeholder: 'Select categories',
-            allowClear: true,
-            width: '100%',
-            dropdownParent: $('#product_service_modal')
-        });
-        
-        // Load categories
-        $.ajax({
-            url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/read-categories',
-            method: 'POST',
-            dataType: 'json',
-            success: function(response) {
-                if (response.data && response.data.length > 0) {
-                    response.data.forEach(function(category) {
-                        $('#category_ids').append(`<option value="${category.id}">${category.name}</option>`);
-                    });
-                }
-            },
-            error: function() {
-                toastr.error('Failed to load categories');
-            }
-        });
+        const baseUrl = '{{env.HOST_URL}}{{env.PREFIX_URL}}';
+        let productServiceTable;
+        let productCategories = [], payTypes = [], paymentCycles = [], billingCategories = [];
+        var psImageItems = [];
+        var psVideoExisting = '';
+        var psVideoFile = null;
+        var psVideoObjectUrl = null;
 
-        let productServiceTable = $('#product_service_tb').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            "searching": true,
-            "dom": 'lrtip', // Remove default search box
-            "ajax": {
-                "url": "{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/read",
-                "type": "POST",
-                "dataSrc": "data"
+        function loadDropdowns() {
+            $.ajax({ url: baseUrl + '/setting/product_cate/read', method: 'POST', dataType: 'json' }).done(function(r) {
+                productCategories = r.data || [];
+                let html = '<option value="">Select Category</option>';
+                productCategories.forEach(function(c) { html += '<option value="' + c.id + '">' + (c.name || '') + '</option>'; });
+                $('#ps_category_id').html(html);
+            });
+            $.ajax({ url: baseUrl + '/setting/pay_type/read', method: 'POST', dataType: 'json' }).done(function(r) {
+                payTypes = r.data || [];
+                let html = '<option value="">Select</option>';
+                payTypes.forEach(function(p) { html += '<option value="' + p.id + '">' + (p.type_name || '') + '</option>'; });
+                $('#ps_pay_type_id').html(html);
+            });
+            $.ajax({ url: baseUrl + '/setting/payment_cycle/read', method: 'POST', dataType: 'json' }).done(function(r) {
+                paymentCycles = r.data || [];
+                let html = '<option value="">Select Cycle</option>';
+                paymentCycles.forEach(function(p) { html += '<option value="' + p.id + '">' + (p.cycle_name || '') + '</option>'; });
+                $('#ps_payment_cycle_id').html(html);
+            });
+            $.ajax({ url: baseUrl + '/setting/billing_cycle_cate/read', method: 'POST', dataType: 'json' }).done(function(r) {
+                billingCategories = r.data || [];
+                let html = '<option value="">Select Category</option>';
+                billingCategories.forEach(function(b) { html += '<option value="' + b.id + '">' + (b.category_name || '') + '</option>'; });
+                $('#ps_billing_cycle_category_id').html(html);
+            });
+        }
+        loadDropdowns();
+
+        productServiceTable = $('#product_service_tb').DataTable({
+            pagingType: 'full_numbers',
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+            searching: true,
+            dom: 'lrtip',
+            ajax: {
+                url: baseUrl + '/product_service/read',
+                type: 'POST',
+                dataSrc: 'data'
             },
-            "columns": [
-                {
-                    data: 'image_url',
-                    render: function(data, type, row) {
-                        if (!row.image_url) {
-                            return `<div class="no-image-container" idkey="${row.id}">
-                                        <i class="fas fa-image default-icon"></i>
-                                        <div class="upload-overlay">
-                                            <span class="btn btn-icon btn-sm btn-light-success product_service_image_upload_btn" title="Upload Image" idkey="${row.id}">
-                                                <i class="fas fa-upload"></i>
-                                            </span>
-                                        </div>
-                                    </div>`;
-                        }
-                        return `<div class="image-container" idkey="${row.id}">
-                                    <img src="{{env.HOST_URL}}{{env.PREFIX_URL}}/assets/images/product_service/${row.image_url}" alt="PI" />
-                                    <div class="image-overlay">
-                                        <span class="btn btn-icon btn-sm btn-light-danger product_service_image_delete_btn" title="Delete Image" idkey="${row.id}">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
-                                    </div>
-                                </div>`;
-                    }
-                },
-                { 
-                    data: 'categories',
-                    render: function(data, type, row) {
-                        return data ? data : 'N/A';
-                    }
-                },
+            columns: [
                 { data: 'name' },
-                { 
-                    data: 'price',
-                    render: function(data, type, row) {
-                        return '$' + parseFloat(data).toFixed(2);
-                    }
-                },
+                { data: 'type', render: function(d) { return d ? d.charAt(0).toUpperCase() + d.slice(1) : 'N/A'; } },
+                { data: function(row) { var c = row.product_category || row.productCategory; return c && c.name ? c.name : 'N/A'; } },
+                { data: 'base_price', render: function(d, t, r) { return (r.currency || 'USD') + ' ' + (d != null ? parseFloat(d) : '0'); } },
                 {
-                    data: 'recurring_interval',
-                    render: function(data, type, row) {
-                        return data.toUpperCase();
-                    }
-                },
-                {
-                    data: 'product_categories',
-                    render: function(data, type, row) {
-                        return data ? `<span class="badge badge-${data[0].type === 'product' ? 'primary' : 'success'}">${data[0].type === 'product' ? 'Product' : 'Service'}</span>` : 'N/A';
-                    }
-                },
-                { 
-                    data: 'billing_type',
-                    render: function(data, type, row) {
-                        return data === 'one_time' ? 'One Time' : 'Recurring';
-                    }
-                },
-                {
-                    data: "createdAt",
-                    render: function(data, type, row) {
-                        return new Date(data).toLocaleDateString();
-                    }
-                },
-                { 
                     data: 'status',
-                    render: function(data, type, row) {
-                        const statusClass = data == 1 ? 'success' : 'danger';
-                        const statusText = data == 1 ? 'Active' : 'Inactive';
-                        return `<span class="badge badge-${statusClass}">${statusText}</span>`;
+                    render: function(d) {
+                        var c = d === 'active' ? 'success' : (d === 'draft' ? 'secondary' : 'danger');
+                        return '<span class="badge badge-' + c + '">' + (d ? d.charAt(0).toUpperCase() + d.slice(1) : '') + '</span>';
                     }
                 },
-                { 
+                {
+                    data: 'images',
+                    orderable: false,
+                    render: function(images, type, row) {
+                        var paths = (images || '').split(',').map(function(p) { return p.trim(); }).filter(Boolean);
+                        if (!paths.length) {
+                            return '<span class="text-muted" title="No images"><i class="fas fa-image fa-lg"></i></span>';
+                        }
+                        var firstPath = paths[0];
+                        var firstUrl = baseUrl + '/' + firstPath;
+                        var dataPaths = paths.join('|||');
+                        return '<a href="javascript:void(0)" class="ps_open_images_btn" data-paths="' + dataPaths.replace(/"/g, '&quot;') + '" title="' + paths.length + ' image(s)">' +
+                            '<img src="' + firstUrl + '" alt="" class="rounded" style="width:40px;height:40px;object-fit:cover;cursor:pointer;">' +
+                            '</a>';
+                    }
+                },
+                {
+                    data: 'videos',
+                    orderable: false,
+                    render: function(videos, type, row) {
+                        var path = (videos || '').trim();
+                        if (!path) {
+                            return '<span class="text-muted" title="No video"><i class="fas fa-video-slash fa-lg"></i></span>';
+                        }
+                        var url = baseUrl + '/' + path;
+                        return '<a href="javascript:void(0)" class="ps_open_video_btn" data-video-path="' + path.replace(/"/g, '&quot;') + '" title="Play video">' +
+                            '<i class="fas fa-play-circle fa-2x text-primary"></i></a>';
+                    }
+                },
+                {
                     data: 'id',
-                    render: function(data, type, row) {
-                        return `<div idkey="${data}">
-                                    <span class="btn btn-icon btn-sm btn-light-primary product_service_edit_btn" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </span>
-                                    <span class="btn btn-icon btn-sm btn-light-danger product_service_delete_btn" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </span>
-                                </div>`;
+                    render: function(id) {
+                        return '<div idkey="' + id + '">' +
+                                '<span class="btn btn-icon btn-sm btn-light-primary ps_edit_btn" title="Edit"><i class="fas fa-edit"></i></span> ' +
+                                '<span class="btn btn-icon btn-sm btn-light-danger ps_delete_btn" title="Delete"><i class="fas fa-trash"></i></span>' +
+                                '</div>';
                     }
                 }
             ]
         });
 
-        // Custom search input
-        $('#product_service_search_input').on('keyup', function() {
-            productServiceTable.search(this.value).draw();
-        });
+        $('#product_service_search_input').on('keyup', function() { productServiceTable.search(this.value).draw(); });
 
-        // Upload image button click
-        $(document).on('click', '.product_service_image_upload_btn', function() {
-            const productId = $(this).attr('idkey');
-            $('#upload_product_id').val(productId);
-            $('#upload_image_form')[0].reset();
-            $('#product_image_input').next('.custom-file-label').text('Choose image...');
-            $('#upload_size_warning').hide();
-            $('#upload_size_success').hide();
-            $('#upload_image_modal').modal('show');
-        });
-
-        // Image validation for upload
-        $('#product_image_input').on('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                $(this).next('.custom-file-label').text(file.name);
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = new Image();
-                    img.onload = function() {
-                        if (img.width > 320 || img.height > 320) {
-                            $('#upload_warning_message').text(
-                                `Image size is ${img.width}×${img.height}px - exceeds maximum 320×320px`
-                            );
-                            $('#upload_size_warning').show();
-                            $('#upload_size_success').hide();
-                        } else {
-                            $('#upload_success_message').text(
-                                `Perfect! Image size is ${img.width}×${img.height}px`
-                            );
-                            $('#upload_size_success').show();
-                            $('#upload_size_warning').hide();
-                        }
-                    };
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Upload image submit
-        $('#upload_image_btn').on('click', function() {
-            const image = $('#product_image_input')[0];
-            if (image.files.length === 0) {
-                toastr.error('Please select an image');
-                return;
-            }
-            const formData = new FormData();
-            formData.append('image', image.files[0]);
-            formData.append('id', $('#upload_product_id').val());
-
-            $.ajax({
-                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/upload-image',
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        toastr.success('Image uploaded successfully!');
-                        $('#upload_image_modal').modal('hide');
-                        productServiceTable.ajax.reload();
-                    } else {
-                        toastr.error(response.message || 'Upload failed');
-                    }
-                },
-                error: function(xhr) {
-                    toastr.error('An error occurred. Please try again.');
-                }
+        $(document).on('click', '.ps_open_images_btn', function(e) {
+            e.preventDefault();
+            var dataPaths = ($(this).attr('data-paths') || '').replace(/&quot;/g, '"');
+            var paths = dataPaths ? dataPaths.split('|||').filter(Boolean) : [];
+            if (!paths.length) return;
+            var urls = paths.map(function(p) { return baseUrl + '/' + p.trim(); });
+            var $inner = $('#ps_image_slider_inner');
+            $inner.empty();
+            urls.forEach(function(url, i) {
+                var active = i === 0 ? ' active' : '';
+                $inner.append('<div class="carousel-item' + active + '"><img src="' + url + '" class="d-block w-100" style="max-height:70vh;object-fit:contain;" alt=""></div>');
             });
+            $('#ps_image_slider_modal').modal('show');
         });
 
-        // Delete image button click
-        $(document).on('click', '.product_service_image_delete_btn', function() {
-            const productId = $(this).attr('idkey');
-            
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to delete this image?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/delete-image',
-                        method: 'POST',
-                        data: { id: productId },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                toastr.success('Image deleted successfully!');
-                                productServiceTable.ajax.reload();
-                            } else {
-                                toastr.error(response.message || 'Delete failed');
-                            }
-                        },
-                        error: function() {
-                            toastr.error('An error occurred. Please try again.');
-                        }
-                    });
-                }
-            });
+        $(document).on('click', '.ps_open_video_btn', function(e) {
+            e.preventDefault();
+            var path = ($(this).attr('data-video-path') || '').trim();
+            if (!path) return;
+            var url = baseUrl + '/' + path;
+            var $player = $('#ps_video_preview_player');
+            $player.attr('src', url);
+            $('#ps_video_preview_modal').modal('show');
+        });
+        $('#ps_video_preview_modal').on('hidden.bs.modal', function() {
+            $('#ps_video_preview_player').get(0).pause();
+            $('#ps_video_preview_player').attr('src', '');
         });
 
-        // Add new button click
-        $('#add_product_service_btn').on('click', function() {
-            $('#modal_title').text('Add Product/Service');
-            $('#product_service_form')[0].reset();
+        function resetModal() {
             $('#product_service_id').val('');
-            $('#category_ids').val(null).trigger('change');
-            $('#description').summernote("code", "");
+            $('input[name="ps_type"][value="product"]').prop('checked', true);
+            $('#ps_category_id').val('');
+            $('#ps_name').val('');
+            $('#ps_short_description').val('');
+            $('#ps_long_description').val('');
+            $('#ps_base_price').val('0.00');
+            $('#ps_currency').val('USD');
+            $('#ps_discount_type').val('none');
+            $('#ps_discount_value').val('0');
+            $('input[name="ps_is_subscription"][value="0"]').prop('checked', true);
+            $('#ps_pay_type_id').val('');
+            $('#ps_payment_cycle_id').val('');
+            $('#ps_billing_cycle_category_id').val('');
+            $('#ps_status').val('active');
+            psImageItems.forEach(function(item) { if (item.type === 'new' && item.objectUrl) URL.revokeObjectURL(item.objectUrl); });
+            psImageItems = [];
+            psVideoExisting = '';
+            if (psVideoObjectUrl) { URL.revokeObjectURL(psVideoObjectUrl); psVideoObjectUrl = null; }
+            psVideoFile = null;
+            renderImageThumbnails();
+            $('#ps_video_preview').empty();
+            $('#product_service_modal .btn-group-toggle label').removeClass('btn-primary active').addClass('btn-outline-primary');
+            $('#product_service_modal .btn-group-toggle label:first').addClass('btn-primary active').removeClass('btn-outline-primary');
+        }
+
+        $('#add_product_service_btn').on('click', function() {
+            $('#product_service_modal_title').text('Add Product / Service');
+            resetModal();
             $('#product_service_modal').modal('show');
         });
 
-        // Edit button click
-        $(document).on('click', '.product_service_edit_btn', function() {
-            const id = $(this).parent().attr('idkey');
-
-            $.ajax({
-                url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/chosen',
-                method: 'POST',
-                dataType: 'json',
-                data: { id: id },
-                success: function(response) {
-                    const result = response.data
-                    
-                    $('#modal_title').text('Edit Product/Service');
-                    $('#product_service_id').val(result.id);
-                    $('#name').val(result.name);
-                    $('#description').summernote("code", result.description);
-                    $('#price').val(result.price);
-                    $('#billing_type').val(result.billing_type);
-                    $('#recurring_interval').val(result.recurring_interval);
-                    $('#stock_quantity').val(result.stock_quantity);
-                    $('#usage_limit').val(result.usage_limit);
-                    $('#status').val(result.status);
-                    $('#category_ids').val(result.category_ids.split(",")).trigger('change');
-                    
-                    $('#product_service_modal').modal('show');
-                },
-                error: function() {
-                    toastr.error('Failed in server');
+        $(document).on('click', '.ps_edit_btn', function() {
+            var id = $(this).parent().attr('idkey');
+            var row = productServiceTable.rows().data().toArray().find(function(r) { return r.id == id; });
+            if (!row) return;
+            $('#product_service_modal_title').text('Edit Product / Service');
+            $('#product_service_id').val(row.id);
+            $('input[name="ps_type"][value="' + (row.type || 'product') + '"]').prop('checked', true);
+            $('#ps_category_id').val(row.category_id || '');
+            $('#ps_name').val(row.name || '');
+            $('#ps_short_description').val(row.short_description || '');
+            $('#ps_long_description').val(row.long_description || '');
+            $('#ps_base_price').val(row.base_price != null ? row.base_price : '0.00');
+            $('#ps_currency').val(row.currency || 'USD');
+            $('#ps_discount_type').val(row.discount_type || 'none');
+            $('#ps_discount_value').val(row.discount_value != null ? row.discount_value : '0');
+            $('input[name="ps_is_subscription"][value="' + (row.is_subscription ? '1' : '0') + '"]').prop('checked', true);
+            $('#ps_pay_type_id').val(row.pay_type_id || '');
+            $('#ps_payment_cycle_id').val(row.payment_cycle_id || '');
+            $('#ps_billing_cycle_category_id').val(row.billing_cycle_category_id || '');
+            $('#ps_tax_required').prop('checked', row.tax_required !== false);
+            $('#ps_status').val(row.status || 'active');
+            var subVal = row.is_subscription ? '1' : '0';
+            $('input[name="ps_is_subscription"]').each(function() {
+                var $lbl = $(this).closest('label');
+                if ($(this).val() === subVal) {
+                    $lbl.addClass('active btn-primary').removeClass('btn-outline-primary');
+                } else {
+                    $lbl.removeClass('active btn-primary').addClass('btn-outline-primary');
                 }
-            })
+            });
+            psImageItems = (row.images && row.images.length) ? row.images.split(',').map(function(p) { return p.trim(); }).filter(Boolean).map(function(p) { return { type: 'existing', path: p }; }) : [];
+            psVideoExisting = row.videos ? (row.videos + '').trim() : '';
+            psVideoFile = null;
+            if (psVideoObjectUrl) { URL.revokeObjectURL(psVideoObjectUrl); psVideoObjectUrl = null; }
+            renderImageThumbnails();
+            $('#ps_video_preview').empty();
+            if (psVideoExisting) $('#ps_video_preview').html('<video src="' + baseUrl + '/' + psVideoExisting + '" controls style="max-width:100%;max-height:200px;"></video>');
+            $('#product_service_modal').modal('show');
         });
 
-        // Save button click
+        function renderImageThumbnails() {
+            var $cont = $('#ps_images_preview');
+            $cont.empty();
+            psImageItems.forEach(function(item, idx) {
+                var src = item.type === 'existing' ? (baseUrl + '/' + item.path) : (item.objectUrl || (item.objectUrl = URL.createObjectURL(item.file)));
+                var isPrimary = idx === 0;
+                var borderStyle = isPrimary ? ' border: 2px solid #ffc107;' : '';
+                var box = $('<div class="position-relative d-inline-block" style="margin-right: 10px; margin-bottom: 8px;">' +
+                    '<img src="' + src + '" alt="" class="rounded" data-ps-img-index="' + idx + '" style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;' + borderStyle + '" title="Set as primary">' +
+                    '<span class="ps-img-remove position-absolute badge badge-danger rounded-circle" data-ps-remove-index="' + idx + '" style="top: -6px; right: -6px; cursor: pointer; font-size: 12px; padding: 2px 6px;">&times;</span>' +
+                    '</div>');
+                $cont.append(box);
+            });
+        }
+        $(document).on('click', '.ps-img-remove', function(e) {
+            e.stopPropagation();
+            var idx = parseInt($(this).data('ps-remove-index'), 10);
+            var item = psImageItems[idx];
+            if (item && item.type === 'new' && item.objectUrl) URL.revokeObjectURL(item.objectUrl);
+            psImageItems.splice(idx, 1);
+            renderImageThumbnails();
+        });
+        $(document).on('click', '#ps_images_preview img[data-ps-img-index]', function() {
+            var idx = parseInt($(this).data('ps-img-index'), 10);
+            if (idx === 0) return;
+            var item = psImageItems[idx];
+            psImageItems.splice(idx, 1);
+            psImageItems.unshift(item);
+            renderImageThumbnails();
+        });
+        $('input[name="ps_is_subscription"]').on('change', function() {
+            $(this).closest('.btn-group').find('label').removeClass('btn-primary active').addClass('btn-outline-primary');
+            $(this).closest('label').addClass('btn-primary active').removeClass('btn-outline-primary');
+        });
+        $('#ps_select_images_btn').on('click', function() { $('#ps_images_input').click(); });
+        $('#ps_images_input').on('change', function() {
+            var files = this.files;
+            if (!files.length) return;
+            for (var i = 0; i < files.length; i++) {
+                psImageItems.push({ type: 'new', file: files[i] });
+            }
+            renderImageThumbnails();
+            this.value = '';
+        });
+        $('#ps_upload_video_btn').on('click', function() { $('#ps_video_input').click(); });
+        $('#ps_clear_video_btn').on('click', function() {
+            psVideoExisting = '';
+            psVideoFile = null;
+            if (psVideoObjectUrl) { URL.revokeObjectURL(psVideoObjectUrl); psVideoObjectUrl = null; }
+            $('#ps_video_preview').empty();
+            $('#ps_video_input').val('');
+        });
+        $('#ps_video_input').on('change', function() {
+            var f = this.files[0];
+            if (!f) return;
+            if (psVideoObjectUrl) URL.revokeObjectURL(psVideoObjectUrl);
+            psVideoExisting = '';
+            psVideoFile = f;
+            psVideoObjectUrl = URL.createObjectURL(f);
+            $('#ps_video_preview').html('<video src="' + psVideoObjectUrl + '" controls style="max-width:100%;max-height:200px;"></video>');
+            this.value = '';
+        });
+
         $('#save_product_service_btn').on('click', function() {
-            const form = $('#product_service_form')[0];
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const categoryIds = $('#category_ids').val();
-            if (!categoryIds || categoryIds.length === 0) {
-                toastr.error('Please select at least one category');
-                return;
-            }
-
-            const id = $('#product_service_id').val();
-            const url = id ? 
-                '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/update' : 
-                '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/create';
-
-            const formData = {
-                id: id,
-                category_ids: categoryIds.join(","),
-                name: $('#name').val(),
-                description: $('#description').summernote("code"),
-                price: $('#price').val(),
-                billing_type: $('#billing_type').val(),
-                recurring_interval: $('#recurring_interval').val(),
-                stock_quantity: $('#stock_quantity').val() || 0,
-                usage_limit: $('#usage_limit').val() || 0,
-                status: $('#status').val()
-            };
-
+            var id = $('#product_service_id').val();
+            var url = id ? baseUrl + '/product_service/update' : baseUrl + '/product_service/create';
+            var name = $('#ps_name').val().trim();
+            var category_id = $('#ps_category_id').val();
+            if (!name) { toastr.warning('Name is required.'); return; }
+            if (!category_id) { toastr.warning('Category is required.'); return; }
+            var fd = new FormData();
+            fd.append('id', id || '');
+            fd.append('type', $('input[name="ps_type"]:checked').val());
+            fd.append('category_id', category_id);
+            fd.append('name', name);
+            fd.append('short_description', $('#ps_short_description').val().trim());
+            fd.append('long_description', $('#ps_long_description').val().trim());
+            fd.append('base_price', $('#ps_base_price').val() || '0');
+            fd.append('currency', $('#ps_currency').val());
+            fd.append('discount_type', $('#ps_discount_type').val());
+            fd.append('discount_value', $('#ps_discount_value').val() || '0');
+            fd.append('is_subscription', $('input[name="ps_is_subscription"]:checked').val() === '1' ? 'true' : 'false');
+            fd.append('pay_type_id', $('#ps_pay_type_id').val() || '');
+            fd.append('payment_cycle_id', $('#ps_payment_cycle_id').val() || '');
+            fd.append('billing_cycle_category_id', $('#ps_billing_cycle_category_id').val() || '');
+            fd.append('tax_required', $('#ps_tax_required').prop('checked') ? 'true' : 'false');
+            fd.append('status', $('#ps_status').val());
+            var existingImages = psImageItems.filter(function(i) { return i.type === 'existing'; }).map(function(i) { return i.path; }).join(',');
+            fd.append('existing_images', existingImages);
+            fd.append('existing_video', psVideoExisting || '');
+            psImageItems.filter(function(i) { return i.type === 'new'; }).forEach(function(i) {
+                fd.append('images', i.file);
+            });
+            if (psVideoFile) fd.append('video', psVideoFile);
+            $('#ps_save_loader').removeClass('d-none').addClass('d-flex');
+            $('#save_product_service_btn').prop('disabled', true);
+            $('#product_service_modal .modal-footer .btn-secondary').prop('disabled', true);
             $.ajax({
                 url: url,
                 method: 'POST',
-                data: formData,
+                data: fd,
+                processData: false,
+                contentType: false,
                 dataType: 'json',
                 success: function(response) {
                     if (response.status === 'success') {
@@ -591,44 +564,37 @@
                     }
                 },
                 error: function(xhr) {
-                    toastr.error('An error occurred. Please try again.');
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'An error occurred. Please try again.';
+                    if (xhr.status === 413) msg = 'File(s) too large. Max 100MB per file.';
+                    toastr.error(msg);
+                },
+                complete: function() {
+                    $('#ps_save_loader').removeClass('d-flex').addClass('d-none');
+                    $('#save_product_service_btn').prop('disabled', false);
+                    $('#product_service_modal .modal-footer .btn-secondary').prop('disabled', false);
                 }
             });
         });
 
-        // Delete button click
-        $(document).on('click', '.product_service_delete_btn', function() {
-            const id = $(this).parent().attr('idkey');
-            
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
+        $(document).on('click', '.ps_delete_btn', function() {
+            var id = $(this).parent().attr('idkey');
+            Swal.fire({ title: 'Are you sure?', text: "You won't be able to revert this!", icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, delete it!', cancelButtonText: 'Cancel' }).then(function(result) {
                 if (result.value) {
                     $.ajax({
-                        url: '{{env.HOST_URL}}{{env.PREFIX_URL}}/product_service/delete',
+                        url: baseUrl + '/product_service/delete',
                         method: 'POST',
                         data: { id: id },
                         dataType: 'json',
                         success: function(response) {
                             if (response.status === 'success') {
-                                toastr.success('Product/Service deleted successfully!');
+                                toastr.success('Deleted successfully!');
                                 productServiceTable.ajax.reload();
-                            } else {
-                                toastr.error(response.message || 'Delete failed');
-                            }
+                            } else toastr.error(response.message || 'Delete failed');
                         },
-                        error: function() {
-                            toastr.error('An error occurred. Please try again.');
-                        }
+                        error: function() { toastr.error('An error occurred.'); }
                     });
                 }
             });
         });
-        
     });
 </script>
